@@ -9,7 +9,9 @@ public class TodoList {
 	private ArrayList <Todo> todoList; 
 	
 	public TodoList() {
+		todo = new Todo("New Todo");
 		todoList = new ArrayList<Todo>();
+		addNew(todo);
 	}
 	
 	public void addNew(Todo todo) {

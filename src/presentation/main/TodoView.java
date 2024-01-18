@@ -15,7 +15,7 @@ public class TodoView extends BorderPane{
 	public Button toggle; 
 	public TextField textField;
 	
-	//public ListView <Todo> todoListView;
+	public ListView <Todo> todoListView;
 	
 	
 	public TodoView() {
@@ -24,8 +24,8 @@ public class TodoView extends BorderPane{
 		setTopBox(topBox);
 		this.setTop(topBox);
 		
-//		todoListView = new ListView <>();
-//		this.setCenter(todoListView);
+		todoListView = new ListView <>();
+		this.setCenter(todoListView);
 		
 		HBox bottomBox = new HBox();
 		setBottomBox(bottomBox);
