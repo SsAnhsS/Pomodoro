@@ -6,15 +6,23 @@ public class TodoList {
 	
 	private Todo todo;
 	
-	private ArrayList <Todo> todoList; 
+	private ArrayList <Todo> todos; 
 	
 	public TodoList() {
-		todo = new Todo("New Todo");
-		todoList = new ArrayList<Todo>();
+		todo = new Todo("New Todo-List");
+		todos = new ArrayList<Todo>();
 		addNew(todo);
 	}
 	
 	public void addNew(Todo todo) {
-		todoList.add(todo);
+		todos.add(todo);
+	}
+	
+	public int getTotal() {
+		return todos.size();
+	}
+	
+	public ArrayList<Todo> getTodos(){
+		return todos;
 	}
 }

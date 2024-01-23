@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import presentation.main.MainViewController;
+import presentation.setting.SettingViewController;
 
 public class App extends Application{
 	
@@ -14,8 +15,10 @@ public class App extends Application{
 	private HashMap<ViewName, Pane> views;
 	
 	private Pane mainView;
+	private Pane settingView;
 	
 	MainViewController mainViewController;
+	SettingViewController settingViewController;
 	
 	public void init() {
 		views = new HashMap<>();
@@ -23,6 +26,10 @@ public class App extends Application{
 		mainViewController = new MainViewController(this);
 		mainView = mainViewController.getRoot();
 		views.put(ViewName.MAINVIEW, mainView);
+		
+		settingViewController = new SettingViewController(this);
+		settingView = settingViewController.getRoot();
+		views.put(ViewName.SETTINGVIEW, settingView);
 		
 	}
 	
@@ -37,6 +44,7 @@ public class App extends Application{
 			primaryStage.setScene(scene);
 			
 			switchView(ViewName.MAINVIEW);
+//			switchView(ViewName.SETTINGVIEW);
 			
 			primaryStage.setTitle("Pomodoro");
 			primaryStage.show();

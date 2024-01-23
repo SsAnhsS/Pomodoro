@@ -8,11 +8,14 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 
-public class TodoView extends BorderPane{
+public class TodoView extends VBox{
+	
+	public final double DISTANCE = 10;
+	public final double MAX_WIDTH = 200;
 	
 	public Button addNew;
-	public Button toggle; 
 	public TextField textField;
 	
 	public ListView <Todo> todoListView;
@@ -21,27 +24,20 @@ public class TodoView extends BorderPane{
 	public TodoView() {
 		
 		HBox topBox = new HBox();
-		setTopBox(topBox);
-		this.setTop(topBox);
+		Label todoLabel = new Label ("To-Do List");
+		todoLabel.setId("todo-label");
+		topBox.getChildren().addAll(todoLabel);
+		topBox.setAlignment(Pos.CENTER_LEFT);
+		topBox.setMaxWidth(MAX_WIDTH);
 		
 		todoListView = new ListView <>();
-		this.setCenter(todoListView);
 		
 		HBox bottomBox = new HBox();
 		setBottomBox(bottomBox);
-		this.setBottom(bottomBox);
 		
-	}
-	
-	public void setTopBox(HBox box) {
-		
-		Label todoLabel = new Label ("To-Do List");
-		todoLabel.setId("todo-label");
-		
-		toggle = new Button("toggle");
-		
-		box.getChildren().addAll(todoLabel, toggle);
-		box.setAlignment(Pos.CENTER);
+		this.getChildren().addAll(topBox, todoListView, bottomBox);
+		this.setSpacing(DISTANCE);
+		this.setMaxWidth(MAX_WIDTH);
 	}
 	
 	public void setBottomBox(HBox box) {
