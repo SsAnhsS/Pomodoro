@@ -17,6 +17,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import mp3player.scene.layout.ImageViewPane;
+import presentation.setting.ThemeName;
 
 public class MainView extends BorderPane {
 	
@@ -29,14 +30,13 @@ public class MainView extends BorderPane {
 	public TextField textField;
 	public ListView <Todo> todoListView;
 	
-	public ImageView imageView;
-	public Text countdownTimeValue;
+	public Button countdownButton;
+	public String countdownTimeValue = "25:00";
 	
 	public Button settingButton;
 	
-	public String file = "src/data/images/tomato.png";
-	
 	TodoView todoView;
+	PhotoView photoView;
 	
 	public MainView(){
 		
@@ -63,23 +63,16 @@ public class MainView extends BorderPane {
 		
 		StackPane pane = new StackPane();
 		
-		imageView = new ImageView();
+		countdownButton = new Button();
+		countdownButton.setText(countdownTimeValue);
+		countdownButton.setMinSize(450, 450);
+		countdownButton.setStyle("-fx-background-color: transparent;");
 		
-		try {
-			imageView.setImage(new Image(new FileInputStream(file)));
-		} catch(FileNotFoundException e) {
-			e.printStackTrace();
-		}
+		photoView = new PhotoView();
+		photoView.setMaxSize(500, 500);
 		
 		
-		ImageViewPane imagePane = new ImageViewPane(imageView);
-		imagePane.setMaxSize(500, 500);
-		
-		countdownTimeValue = new Text();
-		countdownTimeValue.setId("countdown-time");
-		countdownTimeValue.setText("25:00");
-		
-		pane.getChildren().addAll(imagePane, countdownTimeValue);
+		pane.getChildren().addAll(photoView, countdownButton);
 		pane.setAlignment(Pos.CENTER);
 		
 		box.getChildren().addAll(pane);

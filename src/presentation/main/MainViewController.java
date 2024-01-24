@@ -15,6 +15,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
+import presentation.setting.ThemeName;
 
 public class MainViewController {
 	
@@ -26,12 +27,9 @@ public class MainViewController {
 	public TextField textField;
 	public ListView <Todo> todoListView;
 	
-	public ImageView imageView;
-	public Text countdownTimeValue;
+	public Button countdownButton;
 	
 	public Button settingButton;
-	
-	public String file;
 	
 	MainView mainView;
 	
@@ -44,16 +42,24 @@ public class MainViewController {
 		textField = mainView.textField;
 		todoListView = mainView.todoListView;
 		
-		imageView = mainView.imageView;
-		countdownTimeValue = mainView.countdownTimeValue;
+		countdownButton = mainView.countdownButton;
 		
 		settingButton = mainView.settingButton;
-		
 		
 		initialize();
 	}
 	
 	public void initialize() {
+		
+		countdownButton.addEventHandler(ActionEvent.ACTION, new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent arg0) {
+				
+				System.out.println("count down start");
+			}
+			
+		});
 		
 //		todoListView.setCellFactory(new Callback <ListView<Todo>, ListCell<Todo>>(){
 //			@Override

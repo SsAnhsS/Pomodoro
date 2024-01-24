@@ -8,13 +8,13 @@ import java.util.ArrayList;
 
 public class Playlist {
 	private String playlistName;
-	private ArrayList<Track> trackList;
+	private ArrayList<Track> tracks;
 	
 	private String file;
 	
 	public Playlist() {
-		playlistName = "";
-		trackList = new ArrayList<Track>();
+		playlistName = "New Playlist";
+		tracks = new ArrayList<Track>();
 	}
 	
 	public Playlist(String name, String file) {
@@ -37,7 +37,7 @@ public class Playlist {
 			while(line != null) {
 				String trackFile = line;
 				Track newTrack = new Track(trackFile);
-				trackList.add(newTrack);
+				tracks.add(newTrack);
 				line = reader.readLine();
 			}
 			
@@ -51,7 +51,14 @@ public class Playlist {
 	}
 	
 	public void addTrack(Track track) {
-		trackList.add(track);
+		tracks.add(track);
 	}
 	
+	public void setPlaylistName(String name) {
+		playlistName = name;
+	}
+	
+	public void setTracks(ArrayList <Track> tracks) {
+		this.tracks = tracks;
+	}
 }

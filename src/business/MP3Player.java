@@ -18,20 +18,18 @@ public class MP3Player {
 	
 	private Thread playingMusic;
 	
-	private Thread countTime; //-> count down time
 	
-	private SimpleIntegerProperty time;
 	private SimpleObjectProperty <Playlist> currentPlaylist;
 	private SimpleObjectProperty <Track> currentTrack;
+	private SimpleBooleanProperty isPlaying;
 	private SimpleBooleanProperty singlePlay;
 	
 	public MP3Player() {
 		minim = new SimpleMinim();
 		
-		time = new SimpleIntegerProperty();
-		
 		currentTrack = new SimpleObjectProperty<Track>();
 		currentPlaylist = new SimpleObjectProperty<Playlist>();
+		isPlaying = new SimpleBooleanProperty();
 		singlePlay = new SimpleBooleanProperty();
 		singlePlay.set(true);
 	}
