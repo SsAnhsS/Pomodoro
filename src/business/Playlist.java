@@ -20,6 +20,7 @@ public class Playlist {
 	public Playlist(String name, String file) {
 		this.playlistName = name;
 		this.file = file;
+		tracks = new ArrayList<Track>();
 		savePlaylist();
 	}
 	
@@ -60,5 +61,29 @@ public class Playlist {
 	
 	public void setTracks(ArrayList <Track> tracks) {
 		this.tracks = tracks;
+	}
+	
+	public int getTotal() {
+		return tracks.size();
+	}
+	
+	public int getIndex(Track currentTrack) {
+		int index = 0;
+		for(Track aktTrack : tracks) {
+			if(aktTrack.equals(currentTrack)) {
+				index = tracks.indexOf(aktTrack);
+				break;
+			}
+		}
+		return index;
+	}
+	
+	public Track getTrack(int n) {
+		for(Track aktTrack : tracks) {
+			if(n == tracks.indexOf(aktTrack)) {
+				return aktTrack;
+			}
+		}
+		return null;
 	}
 }
