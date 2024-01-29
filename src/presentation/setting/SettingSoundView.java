@@ -16,20 +16,20 @@ public class SettingSoundView extends VBox{
 	public Button singlePlay;
 	public Button multiPlay;
 	
-	public CheckBox bgSound_01;
-	public CheckBox bgSound_02;
-	public CheckBox bgSound_03;
-	public CheckBox bgSound_04;
-	public CheckBox bgSound_05;
-	public CheckBox bgSound_06;
+	public CheckBox bgs_01;
+	public CheckBox bgs_02;
+	public CheckBox bgs_03;
+	public CheckBox bgs_04;
+	public CheckBox bgs_05;
+	public CheckBox bgs_06;
 	
-	public CheckBox pauseSound_01;
-	public CheckBox pauseSound_02;
-	public CheckBox pauseSound_03;
+	public CheckBox ps_01;
+	public CheckBox ps_02;
+	public CheckBox ps_03;
 	
-	public CheckBox notiSound_01;
-	public CheckBox notiSound_02;
-	public CheckBox notiSound_03;
+	public CheckBox ns_01;
+	public CheckBox ns_02;
+	public CheckBox ns_03;
 	
 	public Slider volumeSlider;
 	public Text volumeValue; 
@@ -69,13 +69,13 @@ public class SettingSoundView extends VBox{
 		chooseBox.setSpacing(DISTANCE);
 		
 		HBox soundBox = new HBox();
-		bgSound_01 = new CheckBox("bgSound_01");
-		bgSound_02 = new CheckBox("bgSound_02");
-		bgSound_03 = new CheckBox("bgSound_03");
-		bgSound_04 = new CheckBox("bgSound_04");
-		bgSound_05 = new CheckBox("bgSound_05");
-		bgSound_06 = new CheckBox("No Sound");
-		soundBox.getChildren().addAll(bgSound_01, bgSound_02, bgSound_03, bgSound_04, bgSound_05, bgSound_06);
+		bgs_01 = new CheckBox("bgs_01");
+		bgs_02 = new CheckBox("bgs_02");
+		bgs_03 = new CheckBox("bgs_03");
+		bgs_04 = new CheckBox("bgs_04");
+		bgs_05 = new CheckBox("bgs_05");
+		bgs_06 = new CheckBox("No Sound");
+		soundBox.getChildren().addAll(bgs_01, bgs_02, bgs_03, bgs_04, bgs_05, bgs_06);
 		soundBox.setSpacing(DISTANCE);
 		
 		box.getChildren().addAll(boxName, chooseBox, soundBox);
@@ -87,10 +87,10 @@ public class SettingSoundView extends VBox{
 		Label boxName = new Label("Pause Sound");
 		
 		HBox soundBox = new HBox();
-		pauseSound_01 = new CheckBox("pauseSound_01");
-		pauseSound_02 = new CheckBox("pauseSound_02");
-		pauseSound_03 = new CheckBox("No Sound");
-		soundBox.getChildren().addAll(pauseSound_01, pauseSound_02, pauseSound_03);
+		ps_01 = new CheckBox("ps_01");
+		ps_02 = new CheckBox("ps_02");
+		ps_03 = new CheckBox("No Sound");
+		soundBox.getChildren().addAll(ps_01, ps_02, ps_03);
 		soundBox.setSpacing(DISTANCE);
 		
 		box.getChildren().addAll(boxName, soundBox);
@@ -102,10 +102,10 @@ public class SettingSoundView extends VBox{
 		Label boxName = new Label("Nofitication Sound");
 		
 		HBox soundBox = new HBox();
-		notiSound_01 = new CheckBox("notiSound_01");
-		notiSound_02 = new CheckBox("notiSound_02");
-		notiSound_03 = new CheckBox("No Sound");
-		soundBox.getChildren().addAll(notiSound_01, notiSound_02, notiSound_03);
+		ns_01 = new CheckBox("ns_01");
+		ns_02 = new CheckBox("ns_02");
+		ns_03 = new CheckBox("No Sound");
+		soundBox.getChildren().addAll(ns_01, ns_02, ns_03);
 		soundBox.setSpacing(DISTANCE);
 		
 		box.getChildren().addAll(boxName, soundBox);

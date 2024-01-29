@@ -28,20 +28,20 @@ public class SettingView extends VBox{
 	public Button singlePlay;
 	public Button multiPlay;
 	
-	public CheckBox bgSound_01;
-	public CheckBox bgSound_02;
-	public CheckBox bgSound_03;
-	public CheckBox bgSound_04;
-	public CheckBox bgSound_05;
-	public CheckBox bgSound_06;
+	public CheckBox bgs_01;
+	public CheckBox bgs_02;
+	public CheckBox bgs_03;
+	public CheckBox bgs_04;
+	public CheckBox bgs_05;
+	public CheckBox bgs_06;
 	
-	public CheckBox pauseSound_01;
-	public CheckBox pauseSound_02;
-	public CheckBox pauseSound_03;
+	public CheckBox ps_01;
+	public CheckBox ps_02;
+	public CheckBox ps_03;
 	
-	public CheckBox notiSound_01;
-	public CheckBox notiSound_02;
-	public CheckBox notiSound_03;
+	public CheckBox ns_01;
+	public CheckBox ns_02;
+	public CheckBox ns_03;
 	
 	public ToggleGroup themeGroup;
 	
