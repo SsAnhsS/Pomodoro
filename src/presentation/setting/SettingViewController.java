@@ -2,6 +2,7 @@ package presentation.setting;
 
 import application.App;
 import application.ViewName;
+import business.Pomodoro;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Button;
@@ -15,6 +16,7 @@ import javafx.scene.text.Text;
 public class SettingViewController {
 	
 	private App app;
+	private Pomodoro pomodoro;
 	
 	public Button startButton;
 	
@@ -25,8 +27,9 @@ public class SettingViewController {
 	
 	SettingView settingView;
 	
-	public SettingViewController(App app) {
+	public SettingViewController(App app, Pomodoro pomodoro) {
 		this.app = app;
+		this.pomodoro = pomodoro;
 		
 		settingView = new SettingView();
 		

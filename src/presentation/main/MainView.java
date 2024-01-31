@@ -31,7 +31,7 @@ public class MainView extends BorderPane {
 	public ListView <Todo> todoListView;
 	
 	public Button countdownButton;
-	public String countdownTimeValue = "25:00";
+	public Text countdownTimeValue;
 	
 	public Button settingButton;
 	
@@ -64,7 +64,8 @@ public class MainView extends BorderPane {
 		StackPane pane = new StackPane();
 		
 		countdownButton = new Button();
-		countdownButton.setText(countdownTimeValue);
+		countdownTimeValue = new Text();
+		countdownButton.setText(countdownTimeValue.getText());
 		countdownButton.setMinSize(450, 450);
 		countdownButton.setStyle("-fx-background-color: transparent;");
 		

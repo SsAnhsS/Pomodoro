@@ -2,6 +2,7 @@ package application;
 
 import java.util.HashMap;
 
+import business.Pomodoro;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
@@ -20,14 +21,17 @@ public class App extends Application{
 	MainViewController mainViewController;
 	SettingViewController settingViewController;
 	
+	Pomodoro pomodoro;
+	
 	public void init() {
 		views = new HashMap<>();
+		pomodoro = new Pomodoro();
 		
-		mainViewController = new MainViewController(this);
+		mainViewController = new MainViewController(this, pomodoro);
 		mainView = mainViewController.getRoot();
 		views.put(ViewName.MAINVIEW, mainView);
 		
-		settingViewController = new SettingViewController(this);
+		settingViewController = new SettingViewController(this, pomodoro);
 		settingView = settingViewController.getRoot();
 		views.put(ViewName.SETTINGVIEW, settingView);
 		

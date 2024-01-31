@@ -20,7 +20,6 @@ public class TodoView extends VBox{
 	
 	public ListView <Todo> todoListView;
 	
-	
 	public TodoView() {
 		
 		HBox topBox = new HBox();
