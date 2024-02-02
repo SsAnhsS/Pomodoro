@@ -1,10 +1,14 @@
 package business;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class Playlist {
 	private String playlistName;
@@ -21,13 +25,13 @@ public class Playlist {
 		this.playlistName = name;
 		this.file = file;
 		tracks = new ArrayList<Track>();
-		savePlaylist();
+		getPlaylistFromFile();
 	}
 	
 	/**
 	 * Playlist speichern
 	 */
-	public void savePlaylist() {
+	public void getPlaylistFromFile() {
 		BufferedReader reader;
 
 		try {
@@ -55,8 +59,44 @@ public class Playlist {
 		tracks.add(track);
 	}
 	
+	public void removeTrackWithSoundFile(String soundFile) {
+		Iterator <Track> iterator = tracks.iterator();
+		while(iterator.hasNext()) {
+			Track aktTrack = iterator.next();
+			if(aktTrack.getSoundFile().equals(soundFile)) {
+				iterator.remove();
+			}
+		}
+	}
+	
+	public void saveTrackInFile(String fileName) {
+		File file = new File("src/data/default setting/" + fileName);
+		try {
+			if(!file.exists()) {
+				file.createNewFile();
+			}
+			
+			BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+			Iterator <Track> iterator = tracks.iterator();
+			while(iterator.hasNext()){
+				Track aktTrack = iterator.next();
+				writer.write(aktTrack.getSoundFile());
+				writer.newLine();
+			}
+			
+			writer.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	public void setPlaylistName(String name) {
 		playlistName = name;
+	}
+	
+	public ArrayList<Track> getTracks(){
+		return tracks;
 	}
 	
 	public void setTracks(ArrayList <Track> tracks) {
@@ -85,5 +125,9 @@ public class Playlist {
 			}
 		}
 		return null;
+	}
+	
+	public String getPlaylistName() {
+		return playlistName;
 	}
 }

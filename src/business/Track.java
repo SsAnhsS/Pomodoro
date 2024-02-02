@@ -1,5 +1,11 @@
 package business;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 
 import com.mpatric.mp3agic.ID3v2;
@@ -41,6 +47,44 @@ public class Track {
 		}
 	}
 	
+	public Track getTrackFromFile(String file) {
+		try {
+			
+			BufferedReader reader = new BufferedReader(new FileReader(file));
+			String line = reader.readLine();
+			Track newTrack = null;
+			while(line != null) {
+				String trackFile = line;
+				newTrack = new Track(trackFile);
+				line = reader.readLine();
+			}
+			reader.close();
+			return newTrack;
+		} catch (FileNotFoundException e) {
+			System.err.println("File not found: " + file);
+			e.printStackTrace();
+		}catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public void saveTrackInFile(String fileName) {
+		File file = new File("src/data/default setting/" + fileName);
+		try {
+			if(!file.exists()) {
+				file.createNewFile();
+			}
+			
+			BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+			writer.write(getSoundFile());
+			writer.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	public String getSoundFile() {
 		return soundFile;
 	}
@@ -59,5 +103,9 @@ public class Track {
 	
 	public String getAlbumTitle() {
 		return albumTitle;
+	}
+	
+	public void setTitle(String title) {
+		this.title = title;
 	}
 }

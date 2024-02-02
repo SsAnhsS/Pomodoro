@@ -1,9 +1,5 @@
 package presentation.setting;
 
-import java.util.HashMap;
-
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -24,9 +20,8 @@ public class SettingView extends VBox{
 	
 	public PhotoView smalIcon;
 	public Button startButton;
-
-	public Button singlePlay;
-	public Button multiPlay;
+	
+	public ToggleGroup playModeGroup;
 	
 	public CheckBox bgs_01;
 	public CheckBox bgs_02;
@@ -34,14 +29,13 @@ public class SettingView extends VBox{
 	public CheckBox bgs_04;
 	public CheckBox bgs_05;
 	public CheckBox bgs_06;
+	public CheckBox bgs_07;
+	public CheckBox bgs_08;
+	public CheckBox bgs_09;
+	public CheckBox bgs_10;
 	
-	public CheckBox ps_01;
-	public CheckBox ps_02;
-	public CheckBox ps_03;
-	
-	public CheckBox ns_01;
-	public CheckBox ns_02;
-	public CheckBox ns_03;
+	public ToggleGroup psGroup;
+	public ToggleGroup nsGroup;
 	
 	public ToggleGroup themeGroup;
 	
@@ -76,6 +70,22 @@ public class SettingView extends VBox{
 	}
 	
 	public void setSoundBox() {
+		playModeGroup = settingSoundView.playModeGroup;
+		
+		bgs_01 = settingSoundView.bgs_01;
+		bgs_02 = settingSoundView.bgs_02;
+		bgs_03 = settingSoundView.bgs_03;
+		bgs_04 = settingSoundView.bgs_04;
+		bgs_05 = settingSoundView.bgs_05;
+		bgs_06 = settingSoundView.bgs_06;
+		bgs_07 = settingSoundView.bgs_07;
+		bgs_08 = settingSoundView.bgs_08;
+		bgs_09 = settingSoundView.bgs_09;
+		bgs_10 = settingSoundView.bgs_10;
+		
+		psGroup = settingSoundView.psGroup;
+		nsGroup = settingSoundView.nsGroup;
+		
 		volumeSlider = settingSoundView.volumeSlider;
 		volumeValue = settingSoundView.volumeValue;
 		

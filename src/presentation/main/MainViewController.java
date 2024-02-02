@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import application.App;
 import application.ViewName;
+import business.MP3Player;
 import business.Pomodoro;
 import business.Todo;
 import business.TodoList;
@@ -19,12 +20,14 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
+import presentation.setting.SettingViewController;
 import presentation.setting.ThemeName;
 
 public class MainViewController {
 	
 	private App app;
 	private Pomodoro pomodoro;
+	private MP3Player mp3Player;
 	
 	private ArrayList <Todo> todos;
 	private TodoList todoList = new TodoList();
@@ -33,16 +36,17 @@ public class MainViewController {
 	public TextField textField;
 	public ListView <Todo> todoListView;
 	
+	public PhotoView photoView;
 	public Button countdownButton;
-	public Text countdownTimeValue;
 	
 	public Button settingButton;
 	
-	MainView mainView;
+	private MainView mainView;
 	
-	public MainViewController(App app, Pomodoro pomodoro) {
+	public MainViewController(App app, Pomodoro pomodoro, MP3Player mp3Player) {
 		this.app = app;
 		this.pomodoro = pomodoro;
+		this.mp3Player = mp3Player;
 		
 		mainView = new MainView();
 		
@@ -50,14 +54,13 @@ public class MainViewController {
 		textField = mainView.textField;
 		todoListView = mainView.todoListView;
 		
+		photoView = mainView.photoView;
 		countdownButton = mainView.countdownButton;
-		countdownTimeValue = mainView.countdownTimeValue;
 		
 		settingButton = mainView.settingButton;
 		
 		int timeValue = pomodoro.timeProperty().getValue();
-		countdownTimeValue.setText(getTimeForm(timeValue));
-		countdownButton.setText(countdownTimeValue.getText());
+		countdownButton.setText(getTimeForm(timeValue));
 		initialize();
 	}
 	
@@ -69,7 +72,7 @@ public class MainViewController {
 			@Override
 			public void handle(ActionEvent event) {
 				
-				if(pomodoro.playingProperty().getValue()) {
+				if(pomodoro.countingProperty().getValue()) {
 					pomodoro.pause();
 				} else {
 					pomodoro.play();
@@ -87,7 +90,6 @@ public class MainViewController {
 					public void run() {
 						int timeValue = newValue.intValue();
 						String timeText = getTimeForm(timeValue);
-						countdownTimeValue.setText(timeText);	
 						countdownButton.setText(timeText);
 					}
 				});
@@ -100,6 +102,20 @@ public class MainViewController {
 //				return new TodoCell();
 //			}
 //		});
+		
+		pomodoro.themeProperty().addListener(new ChangeListener <String>() {
+
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				Platform.runLater(new Runnable() {
+					public void run() {
+						photoView.updateImage(newValue);
+					}
+				});
+				
+			}
+			
+		});
 		
 		addNew.addEventHandler(ActionEvent.ACTION, new EventHandler<ActionEvent>() {
 
@@ -121,6 +137,12 @@ public class MainViewController {
 		
 		settingButton.setOnAction(event -> {
 			app.switchView(ViewName.SETTINGVIEW);
+			Platform.runLater(() -> {
+				if(pomodoro.countingProperty().getValue()) {
+					pomodoro.pause();
+				}
+			});
+			
 		});
 	}
 	
@@ -147,6 +169,10 @@ public class MainViewController {
 			timeText += Integer.toString(seconds);
 		}
 		return timeText;
+	}
+	
+	public void updatePhotoView(String themeName) {
+		
 	}
 	
 	public Pane getRoot() {

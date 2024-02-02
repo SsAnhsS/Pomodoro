@@ -12,6 +12,8 @@ public class MP3Player {
 	private SimpleAudioPlayer audioPlayer;
 	
 	private PlaylistManager playlistManager;
+	private SoundManager soundManager;
+	
 	//quan ly playlist, tao ra mot playlist moi, xoa playlist cu
 	
 	//private int indexTrack = 0; //-> co can khong khi chay nhieu track cung 1 luc -> mix background music
@@ -22,10 +24,11 @@ public class MP3Player {
 	
 	private long position = 0;
 	
+	private boolean repeat = true;
+	
 	private SimpleObjectProperty <Playlist> currentPlaylist;
 	private SimpleObjectProperty <Track> currentTrack;
 	private SimpleBooleanProperty isPlaying;
-	private SimpleBooleanProperty singlePlay;
 	
 	public MP3Player() {
 		minim = new SimpleMinim();
@@ -33,10 +36,9 @@ public class MP3Player {
 		currentTrack = new SimpleObjectProperty<Track>();
 		currentPlaylist = new SimpleObjectProperty<Playlist>();
 		isPlaying = new SimpleBooleanProperty();
-		singlePlay = new SimpleBooleanProperty();
-		singlePlay.set(true);
 		
 		playlistManager = new PlaylistManager();
+		soundManager = new SoundManager();
 		
 		currentPlaylist.set(playlistManager.getPlaylist());
 		currentTrack.set(currentPlaylist.getValue().getTrack(indexTrack));
@@ -46,22 +48,28 @@ public class MP3Player {
 		public void run() {
 			audioPlayer.play((int) position);
 		
-			skip();
+//			skip();
 		}
 	}
 	
 	public void play() {
-		if(currentPlaylist.getValue() != null) {
-			
-//			if(singlePlay.getValue())
-			
-			audioPlayer = minim.loadMP3File(currentTrack.getValue().getSoundFile());
-			this.position = 0;
-			
-			playingMusic = new PlayThread();
-			playingMusic.start();
-			
-		}
+		isPlaying.set(true);
+		audioPlayer = minim.loadMP3File(currentTrack.getValue().getSoundFile());
+		
+//		if(currentPlaylist.getValue() != null) {
+//			
+//			isPlaying.set(true);
+////			if(singlePlay.getValue())
+//			
+//			
+//			
+////			this.position = 0;
+//			
+//		}
+		
+//		audioPlayer = minim.loadMP3File(track.getSoundFile());
+		playingMusic = new PlayThread();
+		playingMusic.start();
 	}
 	
 	public void pause() {
@@ -82,7 +90,7 @@ public class MP3Player {
 	
 	public void skip() {
 		
-		if(singlePlay.getValue()) {
+		if(repeat) {
 			if(isPlaying.getValue()) {
 				pause();
 			}
@@ -106,7 +114,29 @@ public class MP3Player {
 			play();
 		}
 		
+	}
+	
+	public void select(Track track) {
+		if(isPlaying.getValue()) {
+			pause();
+		}
+		currentTrack.set(track);
+		this.position = 0;
+		play();
+	}
+	
+	public void select(String soundName) {
+		if(isPlaying.getValue()) {
+			pause();
+		}
+		this.position = 0;
+		currentTrack.set(new Track(soundManager.getSoundFile(soundName)));
+		play();
 		
+	}
+	
+	public void setRepeat(boolean repeat) {
+		this.repeat = repeat;
 	}
 	
 	public void volume(int value) {
@@ -122,19 +152,20 @@ public class MP3Player {
 		}
 	}
 	
-	public SimpleObjectProperty <Track> trackProperty(){
+	public SimpleObjectProperty <Track> currentTrackProperty(){
 		return currentTrack;
 	}
 	
-	public SimpleObjectProperty <Playlist> playlistProperty(){
+	public SimpleObjectProperty <Playlist> currentPlaylistProperty(){
 		return currentPlaylist;
 	}
 	
-	public SimpleBooleanProperty singlePlayProperty() {
-		return singlePlay;
+	public SimpleBooleanProperty playingProperty() {
+		return isPlaying;
 	}
 	
-	
-	
+	public SoundManager getSoundManager() {
+		return soundManager;
+	}
 	
 }

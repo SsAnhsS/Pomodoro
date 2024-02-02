@@ -2,6 +2,7 @@ package application;
 
 import java.util.HashMap;
 
+import business.MP3Player;
 import business.Pomodoro;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -22,16 +23,19 @@ public class App extends Application{
 	SettingViewController settingViewController;
 	
 	Pomodoro pomodoro;
+	MP3Player mp3Player;
 	
 	public void init() {
 		views = new HashMap<>();
 		pomodoro = new Pomodoro();
+		mp3Player = new MP3Player();
+		pomodoro.setMP3Player(mp3Player);
 		
-		mainViewController = new MainViewController(this, pomodoro);
+		mainViewController = new MainViewController(this, pomodoro, mp3Player);
 		mainView = mainViewController.getRoot();
 		views.put(ViewName.MAINVIEW, mainView);
 		
-		settingViewController = new SettingViewController(this, pomodoro);
+		settingViewController = new SettingViewController(this, pomodoro, mp3Player);
 		settingView = settingViewController.getRoot();
 		views.put(ViewName.SETTINGVIEW, settingView);
 		
@@ -69,6 +73,10 @@ public class App extends Application{
 		if(nextView != null) {
 			currentScene.setRoot(nextView);
 		}
+	}
+	
+	public void stop() {
+		System.exit(0);
 	}
 	
 	public static void main(String[] args) {

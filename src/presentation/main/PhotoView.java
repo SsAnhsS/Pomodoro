@@ -10,30 +10,42 @@ import presentation.setting.ThemeName;
 
 public class PhotoView extends ImageViewPane{
 	
-	public String fileString = ThemeName.TOMATO.getFile();
+	public String fileString;
 	public ImageView imageView;
 	
+	public PhotoView(String fileString) {
+		this.fileString = fileString;
+		loadImage();
+	}
+	
 	public PhotoView() {
-		FileInputStream file = null;
-		
+		fileString = ThemeName.TOMATO.getFile();
+		loadImage();
+	}
+	
+	private void loadImage() {
 		try {
-			file = new FileInputStream(fileString);
+			FileInputStream file = new FileInputStream(fileString);
+			Image image = new Image(file);
+			if(imageView == null) {
+				imageView = new ImageView(image);
+				this.setImageView(imageView);
+			} else {
+				imageView.setImage(image);
+			}
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		Image image = new Image(file);
-		imageView = new ImageView(image);
-		this.setImageView(imageView);
 	}
 	
-	public void setFile(String fileString) {
-		this.fileString = fileString;
-	}
-	
-	public void setNewPhoto(String fileString) {
+	public void updateImage(String newFileString) {
+		if(imageView != null && imageView.getImage() != null) {
+			imageView.getImage().cancel();
+		}
 		
+		this.fileString = newFileString;
+		loadImage();
 	}
 	
 }
