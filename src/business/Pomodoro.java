@@ -11,8 +11,8 @@ import presentation.setting.ThemeName;
  */
 public class Pomodoro {
 	
-	public static final int DEFAULT_CONCENTATION_TIME = 60; //*25
-	public static final int DEFAULT_PAUSE_TIME = 10; //5*60
+	public static final int DEFAULT_CONCENTATION_TIME = 25*60;
+	public static final int DEFAULT_PAUSE_TIME = 5*60;
 	public static final int DEFAULT_NUMBER_SESSION = 2;
 	
 	private MP3Player mp3Player;
