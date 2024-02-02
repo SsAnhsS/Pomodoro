@@ -1,11 +1,5 @@
 package business;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 
 import com.mpatric.mp3agic.ID3v2;
@@ -13,6 +7,9 @@ import com.mpatric.mp3agic.InvalidDataException;
 import com.mpatric.mp3agic.Mp3File;
 import com.mpatric.mp3agic.UnsupportedTagException;
 
+/**
+ * Track Klasse
+ */
 public class Track {
 	
 	private Mp3File mp3File;
@@ -46,44 +43,49 @@ public class Track {
 			e.printStackTrace();
 		}
 	}
+//	
+//	public static Track getTrackFromFile(String file) {
+//		try {
+//			
+//			BufferedReader reader = new BufferedReader(new FileReader(file));
+//			String line = reader.readLine();
+//			Track newTrack = null;
+//			while(line != null) {
+//				String trackFile = line;
+//				newTrack = new Track(trackFile);
+//				line = reader.readLine();
+//			}
+//			reader.close();
+//			return newTrack;
+//		} catch (FileNotFoundException e) {
+//			System.err.println("File not found: " + file);
+//			e.printStackTrace();
+//		}catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//		return null;
+//	}
+//	
+//	public void saveTrackInFile(String fileName) {
+//		File file = new File("src/data/default setting/" + fileName);
+//		try {
+//			if(!file.exists()) {
+//				file.createNewFile();
+//			}
+//			
+//			BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+//			writer.write(getSoundFile());
+//			writer.close();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//	}
 	
-	public Track getTrackFromFile(String file) {
-		try {
-			
-			BufferedReader reader = new BufferedReader(new FileReader(file));
-			String line = reader.readLine();
-			Track newTrack = null;
-			while(line != null) {
-				String trackFile = line;
-				newTrack = new Track(trackFile);
-				line = reader.readLine();
-			}
-			reader.close();
-			return newTrack;
-		} catch (FileNotFoundException e) {
-			System.err.println("File not found: " + file);
-			e.printStackTrace();
-		}catch (IOException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
 	
-	public void saveTrackInFile(String fileName) {
-		File file = new File("src/data/default setting/" + fileName);
-		try {
-			if(!file.exists()) {
-				file.createNewFile();
-			}
-			
-			BufferedWriter writer = new BufferedWriter(new FileWriter(file));
-			writer.write(getSoundFile());
-			writer.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+	/**
+	 * Getter und Setter Methode
+	 */
 	
 	public String getSoundFile() {
 		return soundFile;

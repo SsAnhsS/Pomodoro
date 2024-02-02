@@ -6,6 +6,9 @@ import javafx.scene.control.ListCell;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 
+/**
+ * ToDoCell Klasse
+ */
 public class TodoCell extends ListCell<Todo> {
 	
 	private HBox todoBox;

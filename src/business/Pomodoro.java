@@ -6,9 +6,14 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import presentation.setting.ThemeName;
 
+/*
+ * Pomodoro Klasse, um pomodoro application zu kontrollieren
+ */
 public class Pomodoro {
 	
-	public static final int second = 60;
+	public static final int DEFAULT_CONCENTATION_TIME = 60; //*25
+	public static final int DEFAULT_PAUSE_TIME = 10; //5*60
+	public static final int DEFAULT_NUMBER_SESSION = 2;
 	
 	private MP3Player mp3Player;
 	private SoundManager soundManager;
@@ -17,14 +22,17 @@ public class Pomodoro {
 	
 	private int timePosition;
 	
+	private boolean isNewSession;
+	private boolean isFocusTime;
+	
 	private SimpleIntegerProperty time;
 	private SimpleIntegerProperty concentrationTime;
 	private SimpleIntegerProperty pauseTime;
-	private SimpleIntegerProperty sessionNumber;
+	private SimpleIntegerProperty numberSession;
 	private SimpleBooleanProperty isCounting;
 	private SimpleStringProperty theme;
 	
-	private SimpleObjectProperty<Track> pauseSound;
+	private SimpleObjectProperty<Track> relaxSound;
 	private SimpleObjectProperty<Track> notiSound;
 	private SimpleObjectProperty<Playlist> bgSoundPlaylist;
 	private SimpleBooleanProperty singlePlay;
@@ -35,23 +43,26 @@ public class Pomodoro {
 		time = new SimpleIntegerProperty();
 		concentrationTime = new SimpleIntegerProperty();
 		pauseTime = new SimpleIntegerProperty();
-		sessionNumber = new SimpleIntegerProperty();
+		numberSession = new SimpleIntegerProperty();
 		isCounting = new SimpleBooleanProperty();
 		theme = new SimpleStringProperty();
 		
-		concentrationTime.set(25*second);
-		pauseTime.set(5*second);
-		sessionNumber.set(2);
+		concentrationTime.set(DEFAULT_CONCENTATION_TIME);
+		pauseTime.set(DEFAULT_PAUSE_TIME);
+		numberSession.set(DEFAULT_NUMBER_SESSION);
 		isCounting.set(false);
 		theme.set(ThemeName.TOMATO.getFile());
 		
-		pauseSound = new SimpleObjectProperty<Track>();
+		relaxSound = new SimpleObjectProperty<Track>();
 		notiSound = new SimpleObjectProperty<Track>();
 		bgSoundPlaylist = new SimpleObjectProperty<Playlist>();
 		singlePlay = new SimpleBooleanProperty();
 		
-		pauseSound.set(new Track(soundManager.getSoundFile("Morning Funny Beat")));
+		relaxSound.set(new Track(soundManager.getSoundFile("Morning Funny Beat")));
 		notiSound.set(new Track(soundManager.getSoundFile("Bicycle Bell")));
+		
+		Playlist defaultPlaylist = new Playlist("Background Sound", "src\\data\\playlists\\default-background-sound.m3u");
+		bgSoundPlaylist.set(defaultPlaylist);
 		
 		singlePlay.set(true);
 		
@@ -62,11 +73,13 @@ public class Pomodoro {
 	public void setMP3Player(MP3Player mp3Player) {
 		this.mp3Player = mp3Player;
 		soundManager = mp3Player.getSoundManager();
-		mp3Player.currentPlaylistProperty().set(bgSoundPlaylist.getValue());
 	}
 	
+	/**
+	 * Count Down Thread
+	 */
 	public class CountDownThread extends Thread{
-		
+
 		public void run() {
 			countdownTime(timePosition);
 		}
@@ -74,68 +87,130 @@ public class Pomodoro {
 		public void countdownTime(int countdownTime) {
 			for (int i = countdownTime; i >= 0 && isCounting.getValue(); i--) {
 				time.set(i);
-				System.out.println(time.getValue());
 				
 				try {
 					Thread.sleep(1000);
 				} catch (InterruptedException e) {
-					Thread.currentThread().interrupt();
+					interrupt();
 				}
 			}
 			
-//			// Check if it's time for a pause
-//            if (isCounting.getValue()) {
-//                // Decrease sessionNumber
-//                sessionNumber.set(sessionNumber.getValue() - 1);
-//
-//                // If sessionNumber is still greater than 0, start a pause
-//                if (sessionNumber.getValue() > 0) {
-//                    startPauseTime();
-//                }
-//            }
 		}
 		
 	}
 	
-//	// Method to start the countdown for the pause
-//    private void startPauseTime() {
-//        time.set(pauseTime.getValue());
-//        this.timePosition = time.getValue();
-//        countdownThread = new CountDownThread();
-//        countdownThread.start();
-//    }
+//	public void startNewSession() {
+//        isNewSession = true;
+//
+//        while (numberSession.getValue() > 0) {
+//            isFocusTime = true;
+//            play();
+//            try {
+//                countdownThread.join();
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//
+//            isFocusTime = false;
+//            play();
+//            try {
+//                countdownThread.join();
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//
+//            numberSession.set(numberSession.getValue() - 1);
+//        }
+//	}
 	
-//	// Add this method to start a new concentration session
-//  public void startNewSession() {
-//      time.set(concentrationTime.getValue());
-//      this.timePosition = time.getValue();
-//      play(); // Start the countdown for the new session
-//  }
 	
+	/**
+	 * Anfangen Count Down Thread
+	 */
 	public void play() {
 		isCounting.set(true);
+		
+		//Notification sound absplien wenn startet cout down Thread
+        mp3Player.playNotiSound(notiSound.getValue());
+		playBackgroundMusic();
+		
+        mp3Player.play();
+        
 		countdownThread = new CountDownThread();
 		countdownThread.start();
-		mp3Player.select(notiSound.getValue());
+
 	}
 	
+	/**
+	 * Schalten Zeit, ob in der conzentration Zeit oder Pause Zeit
+	 */
+	public void switchTime() {
+		if(isFocusTime) {
+        	time.set(concentrationTime.getValue());
+            mp3Player.playNotiSound(notiSound.getValue());
+    		playBackgroundMusic();
+        }
+        else {
+        	time.set(pauseTime.getValue());
+            mp3Player.playNotiSound(notiSound.getValue());
+            mp3Player.play(relaxSound.getValue().getSoundFile());
+        }
+	}
+	
+	/**
+	 * Abspielen Musik in der conzentratierte Zeit
+	 */
+	public void playBackgroundMusic() {
+		mp3Player.currentPlaylistProperty().set(bgSoundPlaylist.getValue());
+		
+		if(singlePlay.getValue()) {
+			if (mp3Player.currentPlaylistProperty().getValue().getTotal() > 0) {
+	            Track firstTrack = mp3Player.currentPlaylistProperty().getValue().getTrack(0);
+	            if (firstTrack != null) {
+	                mp3Player.currentTrackProperty().set(firstTrack);
+	            }
+	        }
+		}
+		else {
+			Playlist currentPlaylist = mp3Player.currentPlaylistProperty().getValue();
+	        if (currentPlaylist != null) {
+	            for (int i = 0; i < currentPlaylist.getTotal(); i++) {
+	                Track currentTrack = currentPlaylist.getTrack(i);
+	                if (currentTrack != null) {
+	                    mp3Player.play(currentTrack.getSoundFile());
+	                }
+	            }
+	        }
+		}
+	}
+	
+	
+	/**
+	 * Stopen Couwn Down Thread
+	 */
 	public void pause() {
 		isCounting.set(false);
-		mp3Player.select(notiSound.getValue());
-		if(countdownThread != null) {
-			countdownThread.interrupt();
-		}
+		countdownThread.interrupt();
+		mp3Player.pause();
 		this.timePosition = time.getValue();
-		System.out.println("Pause");
-		System.out.println(time.getValue());
-		
+	}
+	
+	/**
+	 * Getter und Setter Methode
+	 */
+	public boolean getIsNewSession() {
+		return isNewSession;
+	}
+	
+	public boolean getIsFocusTime() {
+		return isFocusTime;
 	}
 	
 	public SimpleIntegerProperty timeProperty() {
 		return time;
 	}
 	
-	public SimpleIntegerProperty conzentrationTimeProperty() {
+	public SimpleIntegerProperty concentrationTimeProperty() {
 		return concentrationTime;
 	}
 	
@@ -143,8 +218,8 @@ public class Pomodoro {
 		return pauseTime;
 	}
 	
-	public SimpleIntegerProperty sessionNumberProperty() {
-		return sessionNumber;
+	public SimpleIntegerProperty numberSessionProperty() {
+		return numberSession;
 	}
 	
 	public SimpleStringProperty themeProperty() {
@@ -184,8 +259,8 @@ public class Pomodoro {
 		}
 	}
 	
-	public SimpleObjectProperty <Track> pauseSoundProperty(){
-		return pauseSound;
+	public SimpleObjectProperty <Track> relaxSoundProperty(){
+		return relaxSound;
 	}
 	
 	public SimpleObjectProperty <Track> notiSoundProperty(){

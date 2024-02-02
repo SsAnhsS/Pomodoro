@@ -1,5 +1,8 @@
 package business;
 
+/**
+ * ToDo Klasse
+ */
 public class Todo {
 	
 	private String content;
@@ -10,6 +13,9 @@ public class Todo {
 		this.done = false;
 	}
 	
+	/**
+	 * Getter und Setter Methode
+	 */
 	public String getContent() {
 		return content;
 	}

@@ -10,14 +10,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+/**
+ * Playlist Klasse
+ */
 public class Playlist {
 	private String playlistName;
 	private ArrayList<Track> tracks;
 	
 	private String file;
 	
-	public Playlist() {
-		playlistName = "New Playlist";
+	public Playlist(String playlistName) {
+		this.playlistName = playlistName;
 		tracks = new ArrayList<Track>();
 	}
 	
@@ -55,10 +58,18 @@ public class Playlist {
 		}
 	}
 	
+	/**
+	 * Addieren neue Track in Playlist
+	 * @param track
+	 */
 	public void addTrack(Track track) {
 		tracks.add(track);
 	}
 	
+	/**
+	 * Entfernen Track mit seiner SoundFile
+	 * @param soundFile
+	 */
 	public void removeTrackWithSoundFile(String soundFile) {
 		Iterator <Track> iterator = tracks.iterator();
 		while(iterator.hasNext()) {
@@ -69,8 +80,12 @@ public class Playlist {
 		}
 	}
 	
+	/**
+	 * Speichern alle Tracks in Playlist in einem File
+	 * @param fileName
+	 */
 	public void saveTrackInFile(String fileName) {
-		File file = new File("src/data/default setting/" + fileName);
+		File file = new File("src/data/playlist/" + fileName);
 		try {
 			if(!file.exists()) {
 				file.createNewFile();
@@ -91,22 +106,19 @@ public class Playlist {
 		}
 	}
 	
-	public void setPlaylistName(String name) {
-		playlistName = name;
-	}
-	
-	public ArrayList<Track> getTracks(){
-		return tracks;
-	}
-	
-	public void setTracks(ArrayList <Track> tracks) {
-		this.tracks = tracks;
-	}
-	
+	/**
+	 * Nehme der Anzahl des Tracks in Playlist
+	 * @return
+	 */
 	public int getTotal() {
 		return tracks.size();
 	}
 	
+	/**
+	 * Nehmen Index von Track in ArrayList tracks
+	 * @param track
+	 * @return index
+	 */
 	public int getIndex(Track currentTrack) {
 		int index = 0;
 		for(Track aktTrack : tracks) {
@@ -118,6 +130,27 @@ public class Playlist {
 		return index;
 	}
 	
+	/**
+	 * Nehmen Index von Track-Name in ArrayList tracks
+	 * @param trackName
+	 * @return
+	 */
+	public int getIndex(String trackName) {
+		int index = 0;
+		for(Track aktTrack : tracks) {
+			if(aktTrack.getSoundFile().equals(trackName)) {
+				index = tracks.indexOf(aktTrack);
+				break;
+			}
+		}
+		return index;
+	}
+	
+	/**
+	 * Nehmen Track bei Index in ArrayList tracks
+	 * @param index
+	 * @return Track
+	 */
 	public Track getTrack(int n) {
 		for(Track aktTrack : tracks) {
 			if(n == tracks.indexOf(aktTrack)) {
@@ -125,6 +158,21 @@ public class Playlist {
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * Getter und Setter Methode
+	 */
+	public ArrayList<Track> getTracks(){
+		return tracks;
+	}
+	
+	public void setTracks(ArrayList <Track> tracks) {
+		this.tracks = tracks;
+	}
+	
+	public void setPlaylistName(String name) {
+		playlistName = name;
 	}
 	
 	public String getPlaylistName() {

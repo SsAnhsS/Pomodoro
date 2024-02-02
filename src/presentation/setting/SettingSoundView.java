@@ -12,6 +12,9 @@ import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
+/**
+ * Setting Sound View Klasse, um Sound in der Setting View zu erstellen
+ */
 public class SettingSoundView extends VBox{
 	
 	public final double DISTANCE = 10;
@@ -46,6 +49,7 @@ public class SettingSoundView extends VBox{
 		HBox labelBox = new HBox();
 		
 		Label soundBoxName = new Label("Sound");
+		soundBoxName.getStyleClass().add("label-28");
 		labelBox.getChildren().addAll(soundBoxName);
 		
 		VBox bgSoundBox = new VBox();
@@ -150,10 +154,11 @@ public class SettingSoundView extends VBox{
 	public void setVolumeBox(HBox box) {
 		Label volumeBox = new Label("Volume");
 		Button volumeIcon = new Button();
-		volumeIcon.setId("volume");
-		volumeIcon.getStyleClass().add("volume-icon");
+		volumeIcon.getStyleClass().add("icon-button");
+		volumeIcon.setId("icon-volume");
 		volumeSlider = new Slider(0, 100, defaultVolume);
 		volumeValue = new Text();
+		volumeValue.getStyleClass().add("text-16px");
 		volumeValue.setText(String.valueOf(defaultVolume));
 		
 		box.getChildren().addAll(volumeBox, volumeIcon, volumeSlider, volumeValue);

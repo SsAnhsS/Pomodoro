@@ -1,5 +1,8 @@
 package presentation.setting;
 
+/**
+ * Enum Klasse ThemeName, Theme zu kontrollieren
+ */
 public enum ThemeName {
 	APPLE("src/data/images/apple.png"), 
 	BLUEBERRY("src/data/images/blueberries.png"), 
@@ -16,6 +19,10 @@ public enum ThemeName {
 		this.file = file;
 	}
 	
+	/**
+	 * Getter Klasse
+	 * @return
+	 */
 	public String getFile() {
 		return file;
 	}

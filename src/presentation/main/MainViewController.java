@@ -8,21 +8,22 @@ import business.MP3Player;
 import business.Pomodoro;
 import business.Todo;
 import business.TodoList;
+import business.Track;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
-import javafx.scene.control.ListCell;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
-import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.text.Text;
-import presentation.setting.SettingViewController;
-import presentation.setting.ThemeName;
 
+/**
+ * Main View Controller, um Main View zu kontrollieren
+ */
 public class MainViewController {
 	
 	private App app;
@@ -36,8 +37,14 @@ public class MainViewController {
 	public TextField textField;
 	public ListView <Todo> todoListView;
 	
+	
+	public Label focusTime;
+	public Label pauseTime;
+	public HBox sessionBox;
+	
 	public PhotoView photoView;
 	public Button countdownButton;
+	public Label musicLabel;
 	
 	public Button settingButton;
 	
@@ -54,20 +61,84 @@ public class MainViewController {
 		textField = mainView.textField;
 		todoListView = mainView.todoListView;
 		
+		focusTime = mainView.focusTime;
+		pauseTime = mainView.pauseTime;
+		sessionBox = mainView.sessionBox;
+		
 		photoView = mainView.photoView;
 		countdownButton = mainView.countdownButton;
+		musicLabel = mainView.musicLabel;
 		
 		settingButton = mainView.settingButton;
 		
-		int timeValue = pomodoro.timeProperty().getValue();
-		countdownButton.setText(getTimeForm(timeValue));
+		countdownButton.setText(getTimeForm(pomodoro.concentrationTimeProperty().getValue()));
+		
 		initialize();
 	}
 	
 	public void initialize() {
 		
+		/**
+		 * Listener der concentrationTimeProperty
+		 */
+		pomodoro.concentrationTimeProperty().addListener(new ChangeListener<Number>(){
+
+			@Override
+			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+				Platform.runLater(new Runnable() {
+					public void run() {
+						String newTime = String.valueOf(newValue.intValue() / 60);
+						focusTime.setText("Concentration Time: " + newTime + " minuten");
+					}
+				});
+				
+			}
+
+		});
+		
+		/**
+		 * Listener der pauseTimeProperty
+		 */
+		pomodoro.pauseTimeProperty().addListener(new ChangeListener<Number>(){
+
+			@Override
+			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+				Platform.runLater(new Runnable() {
+					public void run() {
+						String newTime = String.valueOf(newValue.intValue() / 60);
+						pauseTime.setText("Pause Time: " + newTime + " minuten");
+					}
+				});
+				
+			}
+
+		});
+		
+		/**
+		 * Listener der numberSessionPropery
+		 */
+		pomodoro.numberSessionProperty().addListener(new ChangeListener<Number>(){
+
+			@Override
+			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+				Platform.runLater(new Runnable() {
+					public void run() {
+						sessionBox.getChildren().clear();
+						for(int i = 0; i < newValue.intValue(); i++) {
+							PhotoView newPhotoView = new PhotoView();
+							newPhotoView.setMaxSize(20, 20);
+							sessionBox.getChildren().add(newPhotoView);
+						}
+					}
+				});
+			}
+
+		});
+		
+		/**
+		 * ActionEvent fuer count down button
+		 */
 		countdownButton.addEventHandler(ActionEvent.ACTION, new EventHandler<ActionEvent>() {
-			
 			
 			@Override
 			public void handle(ActionEvent event) {
@@ -75,13 +146,34 @@ public class MainViewController {
 				if(pomodoro.countingProperty().getValue()) {
 					pomodoro.pause();
 				} else {
+
 					pomodoro.play();
 				}
+			}
+			
+		});
+		
+		/**
+		 * Listener der currentTrack, um Musikname in der Main View zu zeigen
+		 */
+		mp3Player.currentTrackProperty().addListener(new ChangeListener<Track>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Track> observable, Track oldValue, Track newValue) {
+				Platform.runLater(new Runnable() {
+					public void run() {
+						musicLabel.setText(mp3Player.getSoundManager().getSoundName(newValue.getSoundFile()));
+					}
+				});
 				
 			}
 			
 		});
 		
+		/**
+		 * Lsitener der timeProperty
+		 * Aktualisierungszeit pro Sekunde
+		 */
 		pomodoro.timeProperty().addListener(new ChangeListener <Number>() {
 			
 			@Override
@@ -103,6 +195,10 @@ public class MainViewController {
 //			}
 //		});
 		
+		/**
+		 * Listener der themeProperty
+		 * Aktualisieren Theme
+		 */
 		pomodoro.themeProperty().addListener(new ChangeListener <String>() {
 
 			@Override
@@ -117,6 +213,9 @@ public class MainViewController {
 			
 		});
 		
+		/**
+		 * Addieren neu Text in TodoList
+		 */
 		addNew.addEventHandler(ActionEvent.ACTION, new EventHandler<ActionEvent>() {
 
 			@Override
@@ -135,19 +234,29 @@ public class MainViewController {
 			
 		});
 		
+		/**
+		 * Action in settingButton
+		 */
 		settingButton.setOnAction(event -> {
 			app.switchView(ViewName.SETTINGVIEW);
 			Platform.runLater(() -> {
+
+				if(mp3Player.playingProperty().getValue()) {
+					mp3Player.pause();
+				}
+				
 				if(pomodoro.countingProperty().getValue()) {
 					pomodoro.pause();
 				}
+				
+				
 			});
 			
 		});
 	}
 	
 	/**
-	 * Zeit in String
+	 * Formatieren Zeit in String
 	 * @param timeValue
 	 * @return
 	 */
@@ -169,10 +278,6 @@ public class MainViewController {
 			timeText += Integer.toString(seconds);
 		}
 		return timeText;
-	}
-	
-	public void updatePhotoView(String themeName) {
-		
 	}
 	
 	public Pane getRoot() {

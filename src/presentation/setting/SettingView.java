@@ -1,5 +1,6 @@
 package presentation.setting;
 
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -14,9 +15,14 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import presentation.main.PhotoView;
 
+/**
+ * Setting View Klasse, um Setting View zu gestalten
+ */
 public class SettingView extends VBox{
 	
 	public final double DISTANCE = 10;
+
+	public Insets sameInsets = new Insets(10, 50, 20, 50);
 	
 	public PhotoView smalIcon;
 	public Button startButton;
@@ -44,17 +50,21 @@ public class SettingView extends VBox{
 	
 	SettingSoundView settingSoundView;
 	
-	public ComboBox concentrationTime;
-	public ComboBox pauseTime;
-	public ComboBox setNumber;
+	public ComboBox <Integer> concentrationTime;
+	public ComboBox <Integer> pauseTime;
+	public ComboBox <Integer> numberSession;
 	
 	public SettingView() {
 		HBox labelBox = new HBox();
 		Label name = new Label ("Setting View");
-		startButton = new Button("Start");
+		name.getStyleClass().add("label-32");
+		startButton = new Button();
+		startButton.getStyleClass().add("icon-button");
+		startButton.getStyleClass().add("theme-tomato");
+		
 		labelBox.getChildren().addAll(name, startButton);
-		labelBox.setSpacing(DISTANCE*100);
-		labelBox.setAlignment(Pos.CENTER);
+		labelBox.setSpacing(DISTANCE*95);
+		labelBox.setAlignment(Pos.CENTER_LEFT);
 		
 		settingSoundView = new SettingSoundView();
 		setSoundBox();
@@ -67,6 +77,11 @@ public class SettingView extends VBox{
 		
 		this.getChildren().addAll(labelBox, settingSoundView, themeSettingBox, timeSettingBox);
 		this.setSpacing(DISTANCE);
+		
+		VBox.setMargin(labelBox, sameInsets);
+		VBox.setMargin(settingSoundView, sameInsets);
+		VBox.setMargin(themeSettingBox, sameInsets);
+		VBox.setMargin(timeSettingBox, sameInsets);
 	}
 	
 	public void setSoundBox() {
@@ -93,6 +108,7 @@ public class SettingView extends VBox{
 	
 	public void setThemeBox(VBox box) {
 		Label boxName = new Label("Theme");
+		boxName.getStyleClass().add("label-28");
 		
 		themeGroup = new ToggleGroup();
 		
@@ -127,27 +143,42 @@ public class SettingView extends VBox{
 	
 	public void setTimeBox(VBox box) {
 		Label boxName = new Label("Time");
+		boxName.getStyleClass().add("label-28");
 		
 		HBox box_01 = new HBox();
 		Label comboBox_01 = new Label("Concentration Time");
-		concentrationTime = new ComboBox();
+		comboBox_01.getStyleClass().add("font-size-16");
+		concentrationTime = new ComboBox<Integer>();
+		concentrationTime.getItems().addAll(25, 30, 35, 40, 45);
+		concentrationTime.setValue(25);
 		Text minuten_01 = new Text("Minuten");
+		minuten_01.getStyleClass().add("text-16px");
 		
 		box_01.getChildren().addAll(comboBox_01, concentrationTime, minuten_01);
 		box_01.setSpacing(DISTANCE);
 		
 		HBox box_02 = new HBox();
 		Label comboBox_02 = new Label("Pause Time");
-		pauseTime = new ComboBox();
+		comboBox_02.getStyleClass().add("font-size-16");
+		pauseTime = new ComboBox<Integer>();
+		pauseTime.getItems().addAll(5, 10, 15);
+		pauseTime.setValue(5);
 		Text minuten_02 = new Text("Minuten");
+		minuten_02.getStyleClass().add("text-16px");
+		
 		box_02.getChildren().addAll(comboBox_02, pauseTime, minuten_02);
 		box_02.setSpacing(DISTANCE);
 		
 		HBox box_03 = new HBox();
-		Label comboBox_03 = new Label("Number of Set");
-		setNumber = new ComboBox();
-		Text set = new Text("Set");
-		box_03.getChildren().addAll(comboBox_03, setNumber, set);
+		Label comboBox_03 = new Label("Number of Session");
+		comboBox_03.getStyleClass().add("font-size-16");
+		numberSession = new ComboBox<Integer>();
+		numberSession.getItems().addAll(1, 2, 3, 4);
+		numberSession.setValue(2);
+		Text set = new Text("Sets");
+		set.getStyleClass().add("text-16px");
+		
+		box_03.getChildren().addAll(comboBox_03, numberSession, set);
 		box_03.setSpacing(DISTANCE);
 		
 		box.getChildren().addAll(boxName, box_01, box_02, box_03);

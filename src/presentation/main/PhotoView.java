@@ -8,6 +8,9 @@ import javafx.scene.image.ImageView;
 import mp3player.scene.layout.ImageViewPane;
 import presentation.setting.ThemeName;
 
+/**
+ * Photo View Klasse
+ */
 public class PhotoView extends ImageViewPane{
 	
 	public String fileString;
@@ -23,6 +26,9 @@ public class PhotoView extends ImageViewPane{
 		loadImage();
 	}
 	
+	/**
+	 * aktualisieren Image
+	 */
 	private void loadImage() {
 		try {
 			FileInputStream file = new FileInputStream(fileString);
@@ -39,6 +45,10 @@ public class PhotoView extends ImageViewPane{
 		}
 	}
 	
+	/**
+	 * aktualisieren Image aus File-String
+	 * @param newFileString
+	 */
 	public void updateImage(String newFileString) {
 		if(imageView != null && imageView.getImage() != null) {
 			imageView.getImage().cancel();

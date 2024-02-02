@@ -11,6 +11,10 @@ import javafx.stage.Stage;
 import presentation.main.MainViewController;
 import presentation.setting.SettingViewController;
 
+/** Application Pomodoro
+ * 
+ * @author Thi Hai Anh Luong
+ */
 public class App extends Application{
 	
 	private Stage primaryStage;
@@ -25,6 +29,9 @@ public class App extends Application{
 	Pomodoro pomodoro;
 	MP3Player mp3Player;
 	
+	/**
+	 * Initialisierung des Programm
+	 */
 	public void init() {
 		views = new HashMap<>();
 		pomodoro = new Pomodoro();
@@ -52,7 +59,6 @@ public class App extends Application{
 			primaryStage.setScene(scene);
 			
 			switchView(ViewName.MAINVIEW);
-//			switchView(ViewName.SETTINGVIEW);
 			
 			primaryStage.setTitle("Pomodoro");
 			primaryStage.show();
@@ -75,6 +81,9 @@ public class App extends Application{
 		}
 	}
 	
+	/**
+	 * Stoppen des laufende Programm
+	 */
 	public void stop() {
 		System.exit(0);
 	}

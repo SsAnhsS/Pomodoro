@@ -7,6 +7,6 @@
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JavaFX21"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/MP3-Build-Jars"/>
-	<classpathentry excluding="data/" kind="src" path="src"/>
+	<classpathentry excluding="data/|assets/icons/|assets/fonts/" kind="src" path="src"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

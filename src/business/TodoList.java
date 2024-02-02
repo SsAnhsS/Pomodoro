@@ -2,6 +2,9 @@ package business;
 
 import java.util.ArrayList;
 
+/**
+ * To Do List Klasse
+ */
 public class TodoList {
 	
 	private Todo todo;
@@ -14,10 +17,17 @@ public class TodoList {
 		addNew(todo);
 	}
 	
+	/**
+	 * Addieren neu ToDo in To Do List
+	 * @param todo
+	 */
 	public void addNew(Todo todo) {
 		todos.add(todo);
 	}
 	
+	/**
+	 * Getter und Setter Methode
+	 */
 	public int getTotal() {
 		return todos.size();
 	}

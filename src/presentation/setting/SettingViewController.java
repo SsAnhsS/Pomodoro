@@ -11,14 +11,17 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Slider;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Toggle;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
-import presentation.main.MainViewController;
 
+/**
+ * Setting View Controller Klasse, um Setting View zu kontrollieren
+ */
 public class SettingViewController {
 	
 	private App app;
@@ -47,6 +50,10 @@ public class SettingViewController {
 	public Slider volumeSlider;
 	public Text volumeValue;
 	
+	public ComboBox <Integer> concentrationTime;
+	public ComboBox <Integer> pauseTime;
+	public ComboBox <Integer> numberSession;
+	
 	private SettingView settingView;
 	
 	public SettingViewController(App app, Pomodoro pomodoro, MP3Player mp3Player) {
@@ -73,15 +80,39 @@ public class SettingViewController {
 		bgs_09 = settingView.bgs_09;
 		bgs_10 = settingView.bgs_10;
 		
+//		updateCheckBoxSelection(bgs_01);
+//		updateCheckBoxSelection(bgs_02);
+//		updateCheckBoxSelection(bgs_03);
+//		updateCheckBoxSelection(bgs_04);
+//		updateCheckBoxSelection(bgs_05);
+//		updateCheckBoxSelection(bgs_06);
+//		updateCheckBoxSelection(bgs_07);
+//		updateCheckBoxSelection(bgs_08);
+//		updateCheckBoxSelection(bgs_09);
+//		updateCheckBoxSelection(bgs_10);
+		
+		bgs_03.setSelected(true);
+		bgs_06.setSelected(true);
+		
 		psGroup = settingView.psGroup;
 		nsGroup = settingView.nsGroup;
 		
 		volumeSlider = settingView.volumeSlider;
 		volumeValue = settingView.volumeValue;
 		
+		concentrationTime = settingView.concentrationTime;
+		pauseTime = settingView.pauseTime;
+		numberSession = settingView.numberSession;
+		
 		initialize();
 	}
 	
+	/***
+	 * Check Box Listener
+	 * CheckBox ist ausgrgaehlt, entsprechende Sound in Playlist zu speichern
+	 * Ansonsten, entsprechende Sound in Playlist zu entfernen
+	 * @param checkBox
+	 */
 	private void addCheckBoxListener(CheckBox checkBox) {
 		checkBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
 			String soundName = checkBox.getText();
@@ -90,7 +121,7 @@ public class SettingViewController {
 			if(newValue) {
 				Track newTrack = new Track(mp3Player.getSoundManager().getSoundFile(soundName));
 				if(pomodoro.bgSoundPlaylistProperty().getValue() == null) {
-					pomodoro.bgSoundPlaylistProperty().set(new Playlist());
+					pomodoro.bgSoundPlaylistProperty().set(new Playlist("New Playlist"));
 				}
 				pomodoro.bgSoundPlaylistProperty().getValue().addTrack(newTrack);
 				mp3Player.select(soundName);
@@ -111,6 +142,24 @@ public class SettingViewController {
 		
 	}
 	
+//	private void updateCheckBoxSelection(CheckBox checkBox) {
+//		Playlist playlist = pomodoro.bgSoundPlaylistProperty().getValue();
+//		String checkBoxText = checkBox.getText();
+//		if (playlist != null && playlist.getTotal() > 0) {
+//			for(Track aktTrack : playlist.getTracks()) {
+//				String soundName = mp3Player.getSoundManager().getSoundName(aktTrack.getSoundFile());
+//				if (soundName != null && soundName.equals(checkBoxText)) {
+//		            checkBox.setSelected(true);
+//		        } else {
+//		            checkBox.setSelected(false);
+//		        }
+//			}
+//		}
+//		else {
+//			checkBox.setSelected(false);
+//		}
+//	}
+	
 	public void initialize() {
 		
 		addCheckBoxListener(bgs_01);
@@ -124,6 +173,10 @@ public class SettingViewController {
 		addCheckBoxListener(bgs_09);
 		addCheckBoxListener(bgs_10);
 		
+		/**
+		 * Listener der Play Mode, neue Value fuer singlePlayProperty zu nehmen
+		 * 
+		 */
 		playModeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
 
 			@Override
@@ -142,6 +195,9 @@ public class SettingViewController {
 			
 		});
 		
+		/**
+		 * Listener der Pause Sound ToggleGroup, neue Value fuer relaxSoundProperty zu nehmen
+		 */
 		psGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
 
 			@Override
@@ -151,12 +207,15 @@ public class SettingViewController {
 				if(rb != null) {
 					String selectedSound = rb.getText();
 					mp3Player.select(selectedSound);
-					pomodoro.pauseSoundProperty().set(mp3Player.currentTrackProperty().getValue());
+					pomodoro.relaxSoundProperty().set(mp3Player.currentTrackProperty().getValue());
 				}
 			}
 			
 		});
 		
+		/**
+		 * Listener der Notification Sound ToggleGroup, neue Value fuer notiSoundProperty zu nehmen
+		 */
 		nsGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
 
 			@Override
@@ -172,6 +231,10 @@ public class SettingViewController {
 			
 		});
 		
+		
+		/**
+		 * Listener der Theme ToggleGroup, um neue Theme zu veraendern
+		 */
 		themeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
 
 			@Override
@@ -181,23 +244,110 @@ public class SettingViewController {
 				
 				if(rb != null) {
 					String selectedTheme = rb.getText();
-					pomodoro.setThemeProperty(selectedTheme);
+					setStartButtonStyle(selectedTheme);
+					Platform.runLater(() -> pomodoro.setThemeProperty(selectedTheme));
+					
 				}
 			}
 
 		});
 		
+		/**
+		 * Listener der volume von mp3Player
+		 */
 		volumeSlider.valueProperty().addListener(new ChangeListener<Number>(){
 			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-//				player.volume(newValue.intValue());
+				mp3Player.volume(newValue.intValue());
 				volumeValue.setText(newValue.intValue() + "");
 			}
 		});
 		
+		/**
+		 * Listener der concentrationTime, um die conzentratierte Zeit zu aktualisieren
+		 */
+		concentrationTime.valueProperty().addListener(new ChangeListener<Integer>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Integer> observable, Integer oldValue, Integer newValue) {
+				Platform.runLater(() -> pomodoro.concentrationTimeProperty().set(newValue * 60));
+			}
+			
+		});
+		
+		/**
+		 * Listener der pauseTime, um die pause Zeit zu aktualisieren
+		 */
+		pauseTime.valueProperty().addListener(new ChangeListener<Integer>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Integer> observable, Integer oldValue, Integer newValue) {
+				
+				Platform.runLater(() -> pomodoro.concentrationTimeProperty().set(newValue * 60));
+			}
+			
+		});
+		
+		/**
+		 * Listener der Anzahl der Session, um die Anzahl der Session zu aktualisieren
+		 */
+		numberSession.valueProperty().addListener(new ChangeListener<Integer>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Integer> observable, Integer oldValue, Integer newValue) {
+				
+				Platform.runLater(() -> pomodoro.numberSessionProperty().set(newValue));
+			}
+			
+		});
+		
+		/**
+		 * Action in Start Button
+		 */
 		startButton.setOnAction(event -> {
 			app.switchView(ViewName.MAINVIEW);
-			Platform.runLater(() -> pomodoro.play());
+			Platform.runLater(() ->{
+				if(mp3Player.playingProperty().getValue()) {
+					mp3Player.pause();
+				}
+				pomodoro.play();
+			});
+			
 		});
+	}
+	
+	/**
+	 * Einstellung der neuen Theme in Start Button
+	 * @param themeName
+	 */
+	public void setStartButtonStyle(String themeName) {
+		startButton.getStyleClass().clear();
+		startButton.getStyleClass().add("icon-button");
+		switch(themeName) {
+		case "Tomato":
+			startButton.getStyleClass().add("theme-tomato");
+			break;
+		case "Apple":
+			startButton.getStyleClass().add("theme-apple");
+			break;
+		case "Blueberry":
+			startButton.getStyleClass().add("theme-blueberry");
+			break;
+		case "Carrot":
+			startButton.getStyleClass().add("theme-carrot");
+			break;
+		case "Cherry":
+			startButton.getStyleClass().add("theme-cherry");
+			break;
+		case "Lemon":
+			startButton.getStyleClass().add("theme-lemon");
+			break;
+		case "Olive":
+			startButton.getStyleClass().add("theme-olive");
+			break;
+		case "Orange":
+			startButton.getStyleClass().add("theme-orange");
+			break;
+		}
 	}
 	
 	public Pane getRoot() {

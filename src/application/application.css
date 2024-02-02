@@ -1,14 +1,121 @@
 /* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
 
 .root{
-	-fx-background-color: lightgrey;
+	-fx-background-color: #EDE4D5;
   	display: block;
+  	
 }
 
 #gradient-background{
 	-fx-background-color: linear-gradient(to right, #333333 , #ffffff);
 }
 
-.button{
-	-fx-background-color: #B9D6F3;
+.text-16px{
+	-fx-font-family: "Agency FB";
+  	-fx-text-fill: #000000;
+	-fx-font-size: 16px;
+	-fx-font-weight: normal;
+}
+
+.text-60{
+	-fx-font-family: "Agency FB";
+  	-fx-text-fill: #000000;
+	-fx-font-size: 60px;
+	-fx-font-weight: bold;
+}
+
+.label{ 
+	-fx-font-family: "Agency FB";
+  	-fx-text-fill: #000000;
+  	-fx-font-weight: bold;
+  	-fx-font-size: 20px;
+}
+
+.label-32{
+	-fx-font-size: 32px;
+}
+
+.label-28{
+	-fx-font-size: 28px;
+}
+
+.font-size-16{
+	-fx-font-size: 16px;
+}
+
+.radio-button{
+	-fx-font-family: "Agency FB";
+  	-fx-text-fill: #000000;
+	-fx-font-size: 16px;
+	-fx-font-weight: normal;
+}
+
+.check-box{
+	-fx-font-family: "Agency FB";
+  	-fx-text-fill: #000000;
+	-fx-font-size: 16px;
+	-fx-font-weight: normal;
+}
+
+.icon-button{
+	-fx-min-width: 64px;
+	-fx-min-height: 64px;
+	-fx-padding: 5 5 5 5;
+	-fx-background-repeat: no-repeat no-repeat;
+	-fx-background-size: 48 48;
+	-fx-background-color: transparent;
+	-fx-background-position:center;	    
+}
+
+#setting-button{
+	-fx-background-image: url("../../src/assets/icons/icon-setting-48.png");
+}
+
+#icon-volume{
+	-fx-background-image: url("../../src/assets/icons/icon-volume-48.png");
+	-fx-background-size: 32 32;
+}
+
+#icon-add{
+	-fx-background-image: url("../../src/assets/icons/icon-add-48.png");
+	-fx-background-size: 32 32;
+}
+
+.list-cell {
+    -fx-background-color: white;
+}
+.list-view {
+    -fx-background-color: transparent;
+}
+
+.theme-tomato{
+	-fx-background-image:url("../../src/data/images/tomato.png");
+}
+
+.theme-apple{
+	-fx-background-image:url("../../src/data/images/apple.png");
+}
+
+.theme-blueberry{
+	-fx-background-image:url("../../src/data/images/blueberries.png");
+}
+
+.theme-carrot{
+	-fx-background-image:url("../../src/data/images/carrot.png");
+}
+
+.theme-cherry{
+	-fx-background-image:url("../../src/data/images/cherries.png");
+}
+
+.theme-lemon{
+	-fx-background-image:url("../../src/data/images/lemon.png");
+}
+
+.theme-olive{
+	-fx-background-image:url("../../src/data/images/olives.png");
+}
+
+.theme-orange{
+	-fx-background-image:url("../../src/data/images/orange.png");
 }
