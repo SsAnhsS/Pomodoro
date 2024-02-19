@@ -76,7 +76,14 @@ public class MainViewController {
 		
 		settingButton = mainView.settingButton;
 		
-		focusTime.setText("Focus Time: " + pomodoro.focusTimeProperty().getValue()/60 + " Minuten");
+		float focusTimeValue = (float) pomodoro.focusTimeProperty().getValue()/60;
+		if(focusTimeValue < 1) {
+			focusTime.setText("Focus Time: " + focusTimeValue + " Minuten");
+		}
+		else {
+			focusTime.setText("Focus Time: " + (int)focusTimeValue + " Minuten");
+		}
+		
 		float relaxTimeValue = (float)pomodoro.relaxTimeProperty().getValue() / 60;
 		if(relaxTimeValue < 1) {
 			relaxTime.setText("Telax Time: " + relaxTimeValue + " Minuten");
