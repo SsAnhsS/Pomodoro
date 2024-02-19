@@ -322,6 +322,8 @@ public class SettingViewController {
 	public void setStartButtonStyle(String themeName) {
 		startButton.getStyleClass().clear();
 		startButton.getStyleClass().add("icon-button");
+		startButton.getStyleClass().add("text-24px");
+		startButton.getStyleClass().add("icon-size-60");
 		switch(themeName) {
 		case "Tomato":
 			startButton.getStyleClass().add("theme-tomato");
