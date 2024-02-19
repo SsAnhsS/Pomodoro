@@ -12,14 +12,17 @@ import business.Track;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.util.Callback;
 
 /**
  * Main View Controller, um Main View zu kontrollieren
@@ -39,9 +42,10 @@ public class MainViewController {
 	
 	
 	public Label focusTime;
-	public Label pauseTime;
+	public Label relaxTime;
 	public HBox sessionBox;
 	
+	public Label countdownPhase;
 	public PhotoView photoView;
 	public Button countdownButton;
 	public Label musicLabel;
@@ -62,17 +66,27 @@ public class MainViewController {
 		todoListView = mainView.todoListView;
 		
 		focusTime = mainView.focusTime;
-		pauseTime = mainView.pauseTime;
+		relaxTime = mainView.relaxTime;
 		sessionBox = mainView.sessionBox;
 		
+		countdownPhase = mainView.countdownPhase;
 		photoView = mainView.photoView;
 		countdownButton = mainView.countdownButton;
 		musicLabel = mainView.musicLabel;
 		
 		settingButton = mainView.settingButton;
 		
-		countdownButton.setText(getTimeForm(pomodoro.concentrationTimeProperty().getValue()));
+		focusTime.setText("Focus Time: " + pomodoro.focusTimeProperty().getValue()/60 + " Minuten");
+		float relaxTimeValue = (float)pomodoro.relaxTimeProperty().getValue() / 60;
+		if(relaxTimeValue < 1) {
+			relaxTime.setText("Telax Time: " + relaxTimeValue + " Minuten");
+		}
+		else {
+			relaxTime.setText("Telax Time: " + (int)relaxTimeValue + " Minuten");
+		}
 		
+		updateCountDownPhaseLabel(pomodoro.isFocusTimeProperty().getValue());
+		updateMusicLabel();
 		initialize();
 	}
 	
@@ -81,14 +95,14 @@ public class MainViewController {
 		/**
 		 * Listener der concentrationTimeProperty
 		 */
-		pomodoro.concentrationTimeProperty().addListener(new ChangeListener<Number>(){
+		pomodoro.focusTimeProperty().addListener(new ChangeListener<Number>(){
 
 			@Override
 			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
 				Platform.runLater(new Runnable() {
 					public void run() {
 						String newTime = String.valueOf(newValue.intValue() / 60);
-						focusTime.setText("Concentration Time: " + newTime + " minuten");
+						focusTime.setText("Focus Time: " + newTime + " minuten");
 					}
 				});
 				
@@ -99,14 +113,14 @@ public class MainViewController {
 		/**
 		 * Listener der pauseTimeProperty
 		 */
-		pomodoro.pauseTimeProperty().addListener(new ChangeListener<Number>(){
+		pomodoro.relaxTimeProperty().addListener(new ChangeListener<Number>(){
 
 			@Override
 			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
 				Platform.runLater(new Runnable() {
 					public void run() {
 						String newTime = String.valueOf(newValue.intValue() / 60);
-						pauseTime.setText("Pause Time: " + newTime + " minuten");
+						relaxTime.setText("Relax Time: " + newTime + " minuten");
 					}
 				});
 				
@@ -127,6 +141,31 @@ public class MainViewController {
 						for(int i = 0; i < newValue.intValue(); i++) {
 							PhotoView newPhotoView = new PhotoView();
 							newPhotoView.setMaxSize(20, 20);
+							newPhotoView.setOpacity(0.5);
+							sessionBox.getChildren().add(newPhotoView);
+						}
+					}
+				});
+			}
+
+		});
+		
+		/**
+		 * Listener der turnPropery
+		 */
+		pomodoro.turnProperty().addListener(new ChangeListener<Number>(){
+
+			@Override
+			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+				Platform.runLater(new Runnable() {
+					public void run() {
+						sessionBox.getChildren().clear();
+						for(int i = 0; i < pomodoro.numberSessionProperty().getValue(); i++) {
+							PhotoView newPhotoView = new PhotoView();
+							newPhotoView.setMaxSize(20, 20);
+							if(i >= newValue.intValue()) {
+								newPhotoView.setOpacity(0.5);
+							}
 							sessionBox.getChildren().add(newPhotoView);
 						}
 					}
@@ -146,8 +185,8 @@ public class MainViewController {
 				if(pomodoro.countingProperty().getValue()) {
 					pomodoro.pause();
 				} else {
-
 					pomodoro.play();
+
 				}
 			}
 			
@@ -160,12 +199,25 @@ public class MainViewController {
 
 			@Override
 			public void changed(ObservableValue<? extends Track> observable, Track oldValue, Track newValue) {
-				Platform.runLater(new Runnable() {
-					public void run() {
-						musicLabel.setText(mp3Player.getSoundManager().getSoundName(newValue.getSoundFile()));
-					}
-				});
-				
+				if(newValue != null) {
+					Platform.runLater(new Runnable() {
+						public void run() {
+							updateMusicLabel();
+						}
+					});
+				}
+			}
+			
+		});
+		
+		/**
+		 * Listener der current count down phase
+		 */
+		pomodoro.isFocusTimeProperty().addListener(new ChangeListener<Boolean>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Boolean> value, Boolean oldValue, Boolean newValue) {
+				updateCountDownPhaseLabel(newValue);
 			}
 			
 		});
@@ -188,12 +240,6 @@ public class MainViewController {
 			}
 		});
 		
-//		todoListView.setCellFactory(new Callback <ListView<Todo>, ListCell<Todo>>(){
-//			@Override
-//			public ListCell<Todo> call(ListView<Todo> param) {
-//				return new TodoCell();
-//			}
-//		});
 		
 		/**
 		 * Listener der themeProperty
@@ -214,21 +260,48 @@ public class MainViewController {
 		});
 		
 		/**
+		 * Set TodoCell fuer List View
+		 */
+		todoListView.setCellFactory(new Callback <ListView<Todo>, ListCell<Todo>>(){
+			@Override
+			public ListCell<Todo> call(ListView<Todo> param) {
+				return new TodoCell();
+			}
+		});
+		
+		/**
+		 * selecktiert einem Todo, um fertig zu makieren
+		 */
+		todoListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Todo>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Todo> observable, Todo oldTodo, Todo newTodo) {
+				if(newTodo != null) {
+					Platform.runLater(() -> {
+						newTodo.setDone();
+						updateTodoList(todoList);
+					});
+				}
+			}
+			
+		});
+		
+		/**
 		 * Addieren neu Text in TodoList
 		 */
 		addNew.addEventHandler(ActionEvent.ACTION, new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(ActionEvent event) {
-				if(textField.getText() != null) {
-					Todo newTodo = new Todo(textField.getText());
+				String newText = textField.getText();
+				
+				if(newText != null && !newText.isEmpty()) {
+					Todo newTodo = new Todo(newText);
 					todoList.addNew(newTodo);
-					for(Todo aktTodo : todoList.getTodos()) {
-						System.out.println(aktTodo.getContent());
-					}
-					System.out.println();
 					textField.clear();
+					Platform.runLater(() -> updateTodoList(todoList));
 				}
+				
 				
 			}
 			
@@ -278,6 +351,60 @@ public class MainViewController {
 			timeText += Integer.toString(seconds);
 		}
 		return timeText;
+	}
+	
+	/**
+	 * Aktualisieren Todo-List
+	 * @param todoList
+	 */
+	public void updateTodoList(TodoList todoList) {
+		todos = todoList.getTodos();
+		ObservableList <Todo> todolistModel = todoListView.getItems();
+		todolistModel.clear();
+		todolistModel.addAll(todos);
+		todoListView.setItems(todolistModel);
+	}
+	
+	/**
+	 * Aktualisieren Song-Name
+	 */
+	public void updateMusicLabel() {
+		String songName = "";
+		if(pomodoro.singlePlayProperty().getValue()) {
+			if(mp3Player.currentTrackProperty().getValue()!= null) {
+				songName = mp3Player.getSoundManager().getSoundName(mp3Player.currentTrackProperty().getValue().getSoundFile());
+			}
+		}
+		else {
+			if(mp3Player.currentPlaylistProperty().getValue() != null) {
+				for(Track aktTrack : mp3Player.currentPlaylistProperty().getValue().getTracks()) {
+					if (!songName.isEmpty()) {
+						songName += " - ";
+					}
+					
+					songName += mp3Player.getSoundManager().getSoundName(aktTrack.getSoundFile());
+					
+				}
+			}
+		}
+		musicLabel.setText(songName);
+	}
+	
+	/**
+	 * Aktualisieren Label von Count Down Phase 
+	 * @param value
+	 */
+	public void updateCountDownPhaseLabel(boolean value) {
+		Platform.runLater(new Runnable() {
+			public void run() {
+				if(value) {
+					countdownPhase.setText("Focus Time");
+				}
+				else {
+					countdownPhase.setText("Relax Time");
+				}
+			}
+		});
 	}
 	
 	public Pane getRoot() {

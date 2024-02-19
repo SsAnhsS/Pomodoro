@@ -11,8 +11,8 @@ import presentation.setting.ThemeName;
  */
 public class Pomodoro {
 	
-	public static final int DEFAULT_CONCENTATION_TIME = 25*60;
-	public static final int DEFAULT_PAUSE_TIME = 5*60;
+	public static final int DEFAULT_FOCUS_TIME = 60; //25*60
+	public static final int DEFAULT_RELAX_TIME = 30; //5*60
 	public static final int DEFAULT_NUMBER_SESSION = 2;
 	
 	private MP3Player mp3Player;
@@ -20,15 +20,13 @@ public class Pomodoro {
 	
 	private Thread countdownThread;
 	
-	private int timePosition;
-	
-	private boolean isNewSession;
-	private boolean isFocusTime;
+	private SimpleBooleanProperty isFocusTime;
 	
 	private SimpleIntegerProperty time;
-	private SimpleIntegerProperty concentrationTime;
-	private SimpleIntegerProperty pauseTime;
+	private SimpleIntegerProperty focusTime;
+	private SimpleIntegerProperty relaxTime;
 	private SimpleIntegerProperty numberSession;
+	private SimpleIntegerProperty turn;
 	private SimpleBooleanProperty isCounting;
 	private SimpleStringProperty theme;
 	
@@ -40,16 +38,21 @@ public class Pomodoro {
 	public Pomodoro() {
 		soundManager = new SoundManager();
 		
+		isFocusTime = new SimpleBooleanProperty();
+		
 		time = new SimpleIntegerProperty();
-		concentrationTime = new SimpleIntegerProperty();
-		pauseTime = new SimpleIntegerProperty();
+		focusTime = new SimpleIntegerProperty();
+		relaxTime = new SimpleIntegerProperty();
 		numberSession = new SimpleIntegerProperty();
+		turn = new SimpleIntegerProperty();
 		isCounting = new SimpleBooleanProperty();
 		theme = new SimpleStringProperty();
 		
-		concentrationTime.set(DEFAULT_CONCENTATION_TIME);
-		pauseTime.set(DEFAULT_PAUSE_TIME);
+		isFocusTime.set(true);
+		focusTime.set(DEFAULT_FOCUS_TIME);
+		relaxTime.set(DEFAULT_RELAX_TIME);
 		numberSession.set(DEFAULT_NUMBER_SESSION);
+		turn.set(0);
 		isCounting.set(false);
 		theme.set(ThemeName.TOMATO.getFile());
 		
@@ -66,8 +69,6 @@ public class Pomodoro {
 		
 		singlePlay.set(true);
 		
-		time.set(concentrationTime.getValue());
-		this.timePosition = time.getValue();
 	}
 	
 	public void setMP3Player(MP3Player mp3Player) {
@@ -79,84 +80,93 @@ public class Pomodoro {
 	 * Count Down Thread
 	 */
 	public class CountDownThread extends Thread{
-
+		
+		/**
+		 * run-Methode
+		 */
 		public void run() {
-			countdownTime(timePosition);
+			turn.set(0);
+			int totalSessions = numberSession.getValue();
+	        for (int i = 1; i <= totalSessions && isCounting.getValue(); i++) {
+	            countdownPhase(true);
+	            if (isCounting.getValue()) {
+	                countdownPhase(false);
+	                turn.set(i);
+	            }
+	        }
 		}
 		
-		public void countdownTime(int countdownTime) {
-			for (int i = countdownTime; i >= 0 && isCounting.getValue(); i--) {
-				time.set(i);
-				
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					interrupt();
+		/**
+		 * Countdown-Phase
+		 * count down focus time when isFocusTime is true
+		 * else count down relax time
+		 * @param focus isFocusTime
+		 */
+		private void countdownPhase(boolean focus) {
+	        isFocusTime.set(focus);
+	        int countdownTime = isFocusTime.getValue() ? focusTimeProperty().getValue() : relaxTimeProperty().getValue();
+	        mp3Player.select(notiSound.getValue());
+	        playCountdownSound();
+	        for (int i = countdownTime; i >= 0 && isCounting.getValue(); i--) {
+				if(i == 0) {
+					mp3Player.stop();
 				}
-			}
-			
-		}
+	            time.set(i);
+	            sleepInSeconds(1);
+	        }
+
+	    }
 		
+		/**
+		 * Musik abspielt während Countdown-Funktion läuft 
+		 */
+		private void playCountdownSound() {
+	        if (isFocusTime.getValue()) {
+	        	mp3Player.stop();
+	            playBackgroundMusic();
+	            mp3Player.play();
+	  
+	        } else {
+	        	mp3Player.stop();
+	        	mp3Player.setRepeat(true);
+	            mp3Player.select(relaxSound.getValue());
+	            
+	        }
+	    }
+		
+		/**
+		 * Thread schlafen in x seconds
+		 * @param seconds
+		 */
+		private void sleepInSeconds(int seconds) {
+	        try {
+	            Thread.sleep(seconds * 1000);
+	        } catch (InterruptedException e) {
+	            interrupt();
+	        }
+	    }
+
 	}
-	
-//	public void startNewSession() {
-//        isNewSession = true;
-//
-//        while (numberSession.getValue() > 0) {
-//            isFocusTime = true;
-//            play();
-//            try {
-//                countdownThread.join();
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//
-//            isFocusTime = false;
-//            play();
-//            try {
-//                countdownThread.join();
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//
-//            numberSession.set(numberSession.getValue() - 1);
-//        }
-//	}
-	
-	
+
 	/**
 	 * Anfangen Count Down Thread
 	 */
 	public void play() {
 		isCounting.set(true);
-		
-		//Notification sound absplien wenn startet cout down Thread
-        mp3Player.playNotiSound(notiSound.getValue());
-		playBackgroundMusic();
-		
-        mp3Player.play();
-        
 		countdownThread = new CountDownThread();
 		countdownThread.start();
-
 	}
 	
 	/**
-	 * Schalten Zeit, ob in der conzentration Zeit oder Pause Zeit
+	 * Stopen Couwn Down Thread
 	 */
-	public void switchTime() {
-		if(isFocusTime) {
-        	time.set(concentrationTime.getValue());
-            mp3Player.playNotiSound(notiSound.getValue());
-    		playBackgroundMusic();
-        }
-        else {
-        	time.set(pauseTime.getValue());
-            mp3Player.playNotiSound(notiSound.getValue());
-            mp3Player.play(relaxSound.getValue().getSoundFile());
-        }
+	public void pause() {
+		isCounting.set(false);
+		countdownThread.interrupt();
+		mp3Player.stop();
+		turn.set(0);
 	}
-	
+
 	/**
 	 * Abspielen Musik in der conzentratierte Zeit
 	 */
@@ -164,6 +174,9 @@ public class Pomodoro {
 		mp3Player.currentPlaylistProperty().set(bgSoundPlaylist.getValue());
 		
 		if(singlePlay.getValue()) {
+			mp3Player.stop();
+			mp3Player.setAutoSkip(true);
+			mp3Player.setRepeat(false);
 			if (mp3Player.currentPlaylistProperty().getValue().getTotal() > 0) {
 	            Track firstTrack = mp3Player.currentPlaylistProperty().getValue().getTrack(0);
 	            if (firstTrack != null) {
@@ -172,6 +185,9 @@ public class Pomodoro {
 	        }
 		}
 		else {
+			mp3Player.stop();
+			mp3Player.setAutoSkip(true);
+			mp3Player.setRepeat(false);
 			Playlist currentPlaylist = mp3Player.currentPlaylistProperty().getValue();
 	        if (currentPlaylist != null) {
 	            for (int i = 0; i < currentPlaylist.getTotal(); i++) {
@@ -186,23 +202,10 @@ public class Pomodoro {
 	
 	
 	/**
-	 * Stopen Couwn Down Thread
-	 */
-	public void pause() {
-		isCounting.set(false);
-		countdownThread.interrupt();
-		mp3Player.pause();
-		this.timePosition = time.getValue();
-	}
-	
-	/**
 	 * Getter und Setter Methode
 	 */
-	public boolean getIsNewSession() {
-		return isNewSession;
-	}
 	
-	public boolean getIsFocusTime() {
+	public SimpleBooleanProperty isFocusTimeProperty() {
 		return isFocusTime;
 	}
 	
@@ -210,16 +213,20 @@ public class Pomodoro {
 		return time;
 	}
 	
-	public SimpleIntegerProperty concentrationTimeProperty() {
-		return concentrationTime;
+	public SimpleIntegerProperty focusTimeProperty() {
+		return focusTime;
 	}
 	
-	public SimpleIntegerProperty pauseTimeProperty() {
-		return pauseTime;
+	public SimpleIntegerProperty relaxTimeProperty() {
+		return relaxTime;
 	}
 	
 	public SimpleIntegerProperty numberSessionProperty() {
 		return numberSession;
+	}
+	
+	public SimpleIntegerProperty turnProperty() {
+		return turn;
 	}
 	
 	public SimpleStringProperty themeProperty() {

@@ -9,6 +9,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
@@ -21,13 +22,14 @@ public class MainView extends BorderPane {
 	public final double MAX_WIDTH = 200;
 	
 	public Label focusTime;
-	public Label pauseTime;
+	public Label relaxTime;
 	public HBox sessionBox;
 	
 	public Button addNew;
 	public TextField textField;
 	public ListView <Todo> todoListView;
 	
+	public Label countdownPhase;
 	public PhotoView photoView;
 	public Button countdownButton;
 	public Label musicLabel;
@@ -42,17 +44,18 @@ public class MainView extends BorderPane {
 		HBox topBox = new HBox();
 		
 		VBox leftBox = new VBox();
-		focusTime = new Label("Concentration Time: 25 minuten");
-		pauseTime = new Label("Pause Time: 5 minuten");
+		focusTime = new Label();
+		relaxTime = new Label();
 		sessionBox = new HBox();
 		for(int i = 0; i < 2; i++) {
 			PhotoView newPhotoView = new PhotoView();
 			newPhotoView.setMaxSize(20, 20);
+			newPhotoView.setOpacity(0.5);
 			sessionBox.getChildren().add(newPhotoView);
 		}
 		sessionBox.setSpacing(DISTANCE);
 		
-		leftBox.getChildren().addAll(focusTime, pauseTime, sessionBox);
+		leftBox.getChildren().addAll(focusTime, relaxTime, sessionBox);
 		leftBox.setSpacing(DISTANCE);
 		leftBox.setMinWidth(MAX_WIDTH*5);
 		
@@ -87,23 +90,31 @@ public class MainView extends BorderPane {
 	
 	public void setCenterBox(VBox box){
 		
+		countdownPhase = new Label();
+		countdownPhase.getStyleClass().add(".text-24px");
+		
 		StackPane pane = new StackPane();
+		pane.setAlignment(Pos.CENTER);
 		
 		countdownButton = new Button();
+		countdownButton.setText("Start!");
 		countdownButton.setMinSize(450, 450);
 		countdownButton.setStyle("-fx-background-color: transparent;");
 		countdownButton.getStyleClass().add("text-60");
 		
+		
 		photoView = new PhotoView();
 		photoView.setMaxSize(500, 500);
+		StackPane.setAlignment(photoView, Pos.CENTER);
 		
 		musicLabel = new Label("Music");
 		
 		pane.getChildren().addAll(photoView, countdownButton);
-		pane.setAlignment(Pos.CENTER);
 		
-		box.getChildren().addAll(pane, musicLabel);
+		
+		box.getChildren().addAll(countdownPhase, pane, musicLabel);
 		box.setAlignment(Pos.BASELINE_CENTER);
+		VBox.setVgrow(box, Priority.ALWAYS);
 	}
 	
 	public void setRightBox(HBox box) {
@@ -112,5 +123,6 @@ public class MainView extends BorderPane {
 		settingButton.setId("setting-button");
 		box.getChildren().addAll(settingButton);
 		box.setAlignment(Pos.TOP_RIGHT);
+		HBox.setHgrow(box, Priority.ALWAYS);
 	}
 }

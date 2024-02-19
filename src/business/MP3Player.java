@@ -21,6 +21,9 @@ public class MP3Player {
 	
 	private long position = 0;
 	
+	private boolean isRepeated;
+	private boolean autoSkip;
+	
 	private SimpleObjectProperty <Playlist> currentPlaylist;
 	private SimpleObjectProperty <Track> currentTrack;
 	private SimpleBooleanProperty isPlaying;
@@ -33,8 +36,10 @@ public class MP3Player {
 		currentTrack = new SimpleObjectProperty<Track>();
 		currentPlaylist = new SimpleObjectProperty<Playlist>();
 		isPlaying = new SimpleBooleanProperty();
-		
+		isPlaying.set(false);
 		soundManager = new SoundManager();
+		isRepeated = false;
+		autoSkip = false;
 	}
 	
 	/**
@@ -43,7 +48,19 @@ public class MP3Player {
 	public class PlayThread extends Thread{
 		public void run() {
 			audioPlayer.play((int) position);
-			repeat();
+			
+			if(!isPlaying.getValue()) {
+				return;
+			}
+			
+			if(isRepeated) {
+				repeat();
+			}
+			
+			if(autoSkip) {
+				skip();
+			}
+			
 		}
 	}
 	
@@ -52,8 +69,9 @@ public class MP3Player {
 	 */
 	public void play() {
 		isPlaying.set(true);
-		audioPlayer = minim.loadMP3File(currentTrack.getValue().getSoundFile());
-
+		if(currentTrack.getValue() != null) {
+			audioPlayer = minim.loadMP3File(currentTrack.getValue().getSoundFile());
+		}
 		playingMusic = new PlayThread();
 		playingMusic.start();
 	}
@@ -75,25 +93,39 @@ public class MP3Player {
 	}
 	
 	/**
-	 * Abspielen die Notification Sound
+	 * Abspielen des gewählten Track
 	 * @param track
 	 */
-	public void playNotiSound(Track track) {
-		audioPlayer= minim.loadMP3File(track.getSoundFile());
-		playingMusic = new PlayThread();
-		playingMusic.start();
+	public void select(Track track) {
+		if(isPlaying.getValue()) {
+			pause();
+		}
+		currentTrack.set(track);
+		this.position = 0;
+		audioPlayer = minim.loadMP3File(track.getSoundFile());
+		play();
 	}
 	
 	/**
 	 * Pause PlayingThread, um die Music zu pausieren
 	 */
 	public void pause() {
+		isPlaying.set(false);
+		
 		playingMusic.interrupt();
 		audioPlayer.pause();
-		isPlaying.set(false);
+		
 		this.position = audioPlayer.position();
 	}
 	
+	public void stop() {
+		playingMusic.interrupt();
+		audioPlayer.pause();
+		isPlaying.set(false);
+		this.position = 0;
+		isRepeated = false;
+		autoSkip = false;
+	}
 	/**
 	 * Abspielen die nächste Sound oder Song
 	 */
@@ -159,6 +191,7 @@ public class MP3Player {
 	/**
 	 * Getter und Setter Methode
 	 */
+	
 	public SimpleObjectProperty <Track> currentTrackProperty(){
 		return currentTrack;
 	}
@@ -175,4 +208,11 @@ public class MP3Player {
 		return soundManager;
 	}
 	
+	public void setRepeat(boolean value) {
+		isRepeated = value;
+	}
+	
+	public void setAutoSkip(boolean value) {
+		autoSkip = value;
+	}
 }

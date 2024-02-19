@@ -24,6 +24,14 @@ public class TodoCell extends ListCell<Todo> {
 		
 		todoBox.getChildren().addAll(checkBox, text);
 		todoBox.setSpacing(10);
+		
+		//ActionEvent fuer checkBox
+		checkBox.setOnAction(event -> {
+			Todo todo = getItem();
+			if(todo != null) {
+				todo.setDone();
+			}
+		});
 	}
 	
 	/**
@@ -33,7 +41,7 @@ public class TodoCell extends ListCell<Todo> {
 		super.updateItem(item, empty);
 		
 		if (!empty) {
-			//checkBox.setText(item.getDone());
+			checkBox.setSelected(item.getDone());;
 			text.setText(item.getContent());
 			
 			this.setGraphic(todoBox);

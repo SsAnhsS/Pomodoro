@@ -10,6 +10,8 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.Slider;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -50,21 +52,32 @@ public class SettingView extends VBox{
 	
 	SettingSoundView settingSoundView;
 	
-	public ComboBox <Integer> concentrationTime;
-	public ComboBox <Integer> pauseTime;
+	public ComboBox <Integer> focusTime;
+	public ComboBox <Integer> relaxTime;
 	public ComboBox <Integer> numberSession;
 	
 	public SettingView() {
 		HBox labelBox = new HBox();
+		
 		Label name = new Label ("Setting View");
 		name.getStyleClass().add("label-32");
+		
+		Region space = new Region();
+		
 		startButton = new Button();
+		startButton.setText("Start!");
+		startButton.getStyleClass().add("text-24px");
 		startButton.getStyleClass().add("icon-button");
 		startButton.getStyleClass().add("theme-tomato");
+		startButton.getStyleClass().add("icon-size-60");
 		
-		labelBox.getChildren().addAll(name, startButton);
-		labelBox.setSpacing(DISTANCE*95);
-		labelBox.setAlignment(Pos.CENTER_LEFT);
+		
+		HBox.setHgrow(name, Priority.ALWAYS);
+		HBox.setHgrow(startButton, Priority.ALWAYS);
+		HBox.setHgrow(space, Priority.ALWAYS);
+		
+		labelBox.getChildren().addAll(name, space, startButton);
+		labelBox.setAlignment(Pos.CENTER);
 		
 		settingSoundView = new SettingSoundView();
 		setSoundBox();
@@ -82,6 +95,8 @@ public class SettingView extends VBox{
 		VBox.setMargin(settingSoundView, sameInsets);
 		VBox.setMargin(themeSettingBox, sameInsets);
 		VBox.setMargin(timeSettingBox, sameInsets);
+		
+		
 	}
 	
 	public void setSoundBox() {
@@ -146,32 +161,32 @@ public class SettingView extends VBox{
 		boxName.getStyleClass().add("label-28");
 		
 		HBox box_01 = new HBox();
-		Label comboBox_01 = new Label("Concentration Time");
-		comboBox_01.getStyleClass().add("font-size-16");
-		concentrationTime = new ComboBox<Integer>();
-		concentrationTime.getItems().addAll(25, 30, 35, 40, 45);
-		concentrationTime.setValue(25);
+		Label comboBox_01 = new Label("Focus Time");
+		comboBox_01.getStyleClass().add("font-size-20");
+		focusTime = new ComboBox<Integer>();
+		focusTime.getItems().addAll(25, 30, 35, 40, 45);
+		focusTime.setValue(25);
 		Text minuten_01 = new Text("Minuten");
 		minuten_01.getStyleClass().add("text-16px");
 		
-		box_01.getChildren().addAll(comboBox_01, concentrationTime, minuten_01);
+		box_01.getChildren().addAll(comboBox_01, focusTime, minuten_01);
 		box_01.setSpacing(DISTANCE);
 		
 		HBox box_02 = new HBox();
-		Label comboBox_02 = new Label("Pause Time");
-		comboBox_02.getStyleClass().add("font-size-16");
-		pauseTime = new ComboBox<Integer>();
-		pauseTime.getItems().addAll(5, 10, 15);
-		pauseTime.setValue(5);
+		Label comboBox_02 = new Label("Relax Time");
+		comboBox_02.getStyleClass().add("font-size-20");
+		relaxTime = new ComboBox<Integer>();
+		relaxTime.getItems().addAll(5, 10, 15);
+		relaxTime.setValue(5);
 		Text minuten_02 = new Text("Minuten");
 		minuten_02.getStyleClass().add("text-16px");
 		
-		box_02.getChildren().addAll(comboBox_02, pauseTime, minuten_02);
+		box_02.getChildren().addAll(comboBox_02, relaxTime, minuten_02);
 		box_02.setSpacing(DISTANCE);
 		
 		HBox box_03 = new HBox();
 		Label comboBox_03 = new Label("Number of Session");
-		comboBox_03.getStyleClass().add("font-size-16");
+		comboBox_03.getStyleClass().add("font-size-20");
 		numberSession = new ComboBox<Integer>();
 		numberSession.getItems().addAll(1, 2, 3, 4);
 		numberSession.setValue(2);

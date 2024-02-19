@@ -50,8 +50,8 @@ public class SettingViewController {
 	public Slider volumeSlider;
 	public Text volumeValue;
 	
-	public ComboBox <Integer> concentrationTime;
-	public ComboBox <Integer> pauseTime;
+	public ComboBox <Integer> focusTime;
+	public ComboBox <Integer> relaxTime;
 	public ComboBox <Integer> numberSession;
 	
 	private SettingView settingView;
@@ -100,8 +100,8 @@ public class SettingViewController {
 		volumeSlider = settingView.volumeSlider;
 		volumeValue = settingView.volumeValue;
 		
-		concentrationTime = settingView.concentrationTime;
-		pauseTime = settingView.pauseTime;
+		focusTime = settingView.focusTime;
+		relaxTime = settingView.relaxTime;
 		numberSession = settingView.numberSession;
 		
 		initialize();
@@ -265,11 +265,11 @@ public class SettingViewController {
 		/**
 		 * Listener der concentrationTime, um die conzentratierte Zeit zu aktualisieren
 		 */
-		concentrationTime.valueProperty().addListener(new ChangeListener<Integer>() {
+		focusTime.valueProperty().addListener(new ChangeListener<Integer>() {
 
 			@Override
 			public void changed(ObservableValue<? extends Integer> observable, Integer oldValue, Integer newValue) {
-				Platform.runLater(() -> pomodoro.concentrationTimeProperty().set(newValue * 60));
+				Platform.runLater(() -> pomodoro.focusTimeProperty().set(newValue * 60));
 			}
 			
 		});
@@ -277,12 +277,12 @@ public class SettingViewController {
 		/**
 		 * Listener der pauseTime, um die pause Zeit zu aktualisieren
 		 */
-		pauseTime.valueProperty().addListener(new ChangeListener<Integer>() {
+		relaxTime.valueProperty().addListener(new ChangeListener<Integer>() {
 
 			@Override
 			public void changed(ObservableValue<? extends Integer> observable, Integer oldValue, Integer newValue) {
 				
-				Platform.runLater(() -> pomodoro.concentrationTimeProperty().set(newValue * 60));
+				Platform.runLater(() -> pomodoro.relaxTimeProperty().set(newValue * 60));
 			}
 			
 		});

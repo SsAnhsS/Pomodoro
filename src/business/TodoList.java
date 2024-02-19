@@ -12,9 +12,7 @@ public class TodoList {
 	private ArrayList <Todo> todos; 
 	
 	public TodoList() {
-		todo = new Todo("New Todo-List");
 		todos = new ArrayList<Todo>();
-		addNew(todo);
 	}
 	
 	/**
